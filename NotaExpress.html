@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d1117">
+<title>POSMAS — Panel Dueño</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg:       #0d1117;
+  --surface:  #161b22;
+  --surface2: #21262d;
+  --border:   #30363d;
+  --accent:   #58a6ff;
+  --green:    #3fb950;
+  --red:      #f85149;
+  --yellow:   #d29922;
+  --purple:   #bc8cff;
+  --orange:   #ff7b72;
+  --text:     #e6edf3;
+  --muted:    #8b949e;
+  --radius:   14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 90px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text);
+}
+
+.brand span { color: var(--accent); }
+
+.live-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.header-sub {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 65px;
+  z-index: 99;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+
+.nav-tab {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── PAGES ── */
+.page { display: none; padding: 16px; }
+.page.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title .badge {
+  background: var(--surface2);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── STAT GRID ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stat-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 12px;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'Space Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stat-value.green { color: var(--green); }
+.stat-value.red   { color: var(--red); }
+.stat-value.blue  { color: var(--accent); }
+.stat-value.yellow{ color: var(--yellow); }
+
+.stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* ── PRODUCT LIST ── */
+.product-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.product-row:last-child { border-bottom: none; }
+
+.product-rank {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 20px;
+  text-align: center;
+}
+
+.product-info { flex: 1; min-width: 0; }
+
+.product-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-meta {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+}
+
+.product-amount {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  text-align: right;
+}
+
+/* ── PENDING ITEMS ── */
+.pending-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.pending-item.aprobado { border-color: var(--green); }
+.pending-item.rechazado { border-color: var(--red); opacity: 0.6; }
+
+.pending-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.pending-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.pending-time {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  white-space: nowrap;
+}
+
+.pending-stocks {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.stock-box {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+}
+
+.stock-box .lbl {
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 3px;
+}
+
+.stock-box .val {
+  font-family: 'Space Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stock-box.anterior .val { color: var(--muted); }
+.stock-box.nuevo .val    { color: var(--accent); }
+.stock-box.diff .val     { color: var(--green); }
+.stock-box.diff .val.neg { color: var(--red); }
+
+.pending-supervisor {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.pending-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-approve {
+  flex: 2;
+  background: rgba(63,185,80,0.15);
+  border: 1px solid var(--green);
+  color: var(--green);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.btn-reject {
+  flex: 1;
+  background: rgba(248,81,73,0.1);
+  border: 1px solid var(--red);
+  color: var(--red);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.btn-approve:active { background: rgba(63,185,80,0.3); }
+.btn-reject:active  { background: rgba(248,81,73,0.2); }
+
+.status-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-tag.pendiente { background: rgba(210,153,34,0.15); color: var(--yellow); border: 1px solid rgba(210,153,34,0.3); }
+.status-tag.aprobado  { background: rgba(63,185,80,0.15);  color: var(--green);  border: 1px solid rgba(63,185,80,0.3); }
+.status-tag.rechazado { background: rgba(248,81,73,0.1);   color: var(--red);    border: 1px solid rgba(248,81,73,0.3); }
+
+/* ── SUPERVISOR CARDS ── */
+.supervisor-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.sup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sup-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sup-toggle {
+  position: relative;
+  width: 46px;
+  height: 26px;
+}
+
+.sup-toggle input { display: none; }
+
+.sup-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sup-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--muted);
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: 0.3s;
+}
+
+input:checked + .sup-slider { background: rgba(63,185,80,0.2); border-color: var(--green); }
+input:checked + .sup-slider::before { background: var(--green); left: 21px; }
+
+.sup-schedule {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.time-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  text-align: center;
+}
+
+.time-input:focus { border-color: var(--accent); }
+
+.days-grid {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.day-btn {
+  padding: 4px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.day-btn.active {
+  background: rgba(88,166,255,0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-save-sup {
+  width: 100%;
+  background: rgba(88,166,255,0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* ── COMPRAS ── */
+.compra-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.compra-row:last-child { border-bottom: none; }
+
+.compra-icon {
+  width: 36px; height: 36px;
+  background: rgba(188,140,255,0.15);
+  border: 1px solid rgba(188,140,255,0.3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.compra-info { flex: 1; min-width: 0; }
+
+.compra-proveedor {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.compra-meta {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+}
+
+.compra-monto {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--purple);
+}
+
+/* ── RESUMEN SEMANAL ── */
+.semana-bar {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.semana-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.semana-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.semana-total {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.bar-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+
+.semana-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── LOADING ── */
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 24px; height: 24px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+.empty .icon { font-size: 40px; margin-bottom: 10px; }
+.empty p { font-size: 13px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 999;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.ok   { border-color: var(--green); color: var(--green); }
+.toast.err  { border-color: var(--red);   color: var(--red); }
+.toast.warn { border-color: var(--yellow);color: var(--yellow); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 100;
+}
+
+.nav-item {
+  flex: 1;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-item.active { color: var(--accent); }
+.nav-item .nav-icon { font-size: 20px; }
+
+.nav-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 18px);
+  background: var(--red);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 5px;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* ── REFRESH BTN ── */
+.btn-refresh {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all 0.2s;
+}
+.btn-refresh:active { background: var(--border); }
+
+/* ── ADD SUPERVISOR BTN ── */
+.btn-add-sup {
+  width: 100%;
+  background: rgba(63,185,80,0.1);
+  border: 1px dashed var(--green);
+  color: var(--green);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-top: 4px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.update-time {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+/* Precio editor */
+.precio-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.precio-row:last-child { border-bottom: none; }
+.precio-nombre { flex: 1; font-size: 13px; font-weight: 500; }
+.precio-input {
+  width: 80px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--accent);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  outline: none;
+  text-align: center;
+}
+.precio-input:focus { border-color: var(--accent); }
+.btn-precio-save {
+  background: rgba(88,166,255,0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="brand">POS<span>MAS</span> <span style="font-size:14px;font-weight:400;color:var(--muted)">Admin</span></div>
+    <div style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>En vivo</div>
+  </div>
+  <div class="header-sub" id="header-time">Cargando...</div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('ventas')">💰 Ventas</div>
+  <div class="nav-tab" onclick="switchTab('inventario')">📦 Inventario</div>
+  <div class="nav-tab" onclick="switchTab('compras')">🧾 Compras</div>
+  <div class="nav-tab" onclick="switchTab('semana')">📊 Semana</div>
+  <div class="nav-tab" onclick="switchTab('horarios')">🕐 Horarios</div>
+  <div class="nav-tab" onclick="switchTab('precios')">💲 Precios</div>
+</div>
+
+<!-- ════ VENTAS ════ -->
+<div id="page-ventas" class="page active">
+  <div class="section-header">
+    <div class="section-title">Ventas del día</div>
+    <button class="btn-refresh" onclick="cargarVentas()">↻ Actualizar</button>
+  </div>
+
+  <div class="stat-grid" id="ventas-stats">
+    <div class="stat-box">
+      <div class="stat-label">Total del día</div>
+      <div class="stat-value green" id="v-total">—</div>
+      <div class="stat-sub" id="v-fecha">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Transacciones</div>
+      <div class="stat-value blue" id="v-count">—</div>
+      <div class="stat-sub">ventas</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Ticket promedio</div>
+      <div class="stat-value yellow" id="v-promedio">—</div>
+      <div class="stat-sub">por venta</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Última venta</div>
+      <div class="stat-value" id="v-ultima" style="font-size:16px">—</div>
+      <div class="stat-sub" id="v-ultima-hora">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      Top productos hoy
+      <span class="update-time" id="v-update">—</span>
+    </div>
+    <div id="top-productos">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Últimas ventas</div>
+    <div id="ultimas-ventas">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ INVENTARIO ════ -->
+<div id="page-inventario" class="page">
+  <div class="section-header">
+    <div class="section-title">Pendientes</div>
+    <button class="btn-refresh" onclick="cargarPendientes()">↻ Actualizar</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-label">Pendientes</div>
+      <div class="stat-value yellow" id="inv-pendientes">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Aprobados hoy</div>
+      <div class="stat-value green" id="inv-aprobados">0</div>
+    </div>
+  </div>
+
+  <div id="pendientes-list">
+    <div class="loading"><div class="spinner"></div>Cargando...</div>
+  </div>
+</div>
+
+<!-- ════ COMPRAS ════ -->
+<div id="page-compras" class="page">
+  <div class="section-header">
+    <div class="section-title">Compras</div>
+    <button class="btn-refresh" onclick="cargarCompras()">↻ Actualizar</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-label">Compras este mes</div>
+      <div class="stat-value purple" id="c-mes">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Cuentas por pagar</div>
+      <div class="stat-value red" id="c-deuda">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Compras recientes</div>
+    <div id="compras-list">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cuentas por pagar</div>
+    <div id="cuentas-list">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SEMANA ════ -->
+<div id="page-semana" class="page">
+  <div class="section-header">
+    <div class="section-title">Resumen semanal</div>
+    <button class="btn-refresh" onclick="cargarSemana()">↻ Actualizar</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-label">Esta semana</div>
+      <div class="stat-value green" id="s-semana">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Semana anterior</div>
+      <div class="stat-value blue" id="s-anterior">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Utilidad bruta</div>
+      <div class="stat-value yellow" id="s-utilidad">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Transacciones</div>
+      <div class="stat-value" id="s-transacciones">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Últimas semanas</div>
+    <div id="semanas-list">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ HORARIOS ════ -->
+<div id="page-horarios" class="page">
+  <div class="section-header">
+    <div class="section-title">Supervisores</div>
+  </div>
+  <div id="supervisores-list">
+    <div class="loading"><div class="spinner"></div>Cargando...</div>
+  </div>
+  <button class="btn-add-sup" onclick="agregarSupervisor()">+ Agregar supervisor</button>
+</div>
+
+<!-- ════ PRECIOS ════ -->
+<div id="page-precios" class="page">
+  <div class="section-header">
+    <div class="section-title">Cambiar precios</div>
+  </div>
+  <div class="card" style="margin-bottom:12px">
+    <input type="text" id="buscar-precio"
+      style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;"
+      placeholder="🔍 Buscar producto..."
+      oninput="filtrarPrecios(this.value)">
+  </div>
+  <div class="card">
+    <div class="card-title">Productos <span class="badge" id="precio-count">—</span></div>
+    <div id="precios-list">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="switchTabNav('ventas',this)">
+    <div class="nav-icon">💰</div>Ventas
+  </div>
+  <div class="nav-item" onclick="switchTabNav('inventario',this)">
+    <div class="nav-icon">📦</div>Inventario
+    <div class="nav-badge" id="badge-inv" style="display:none">0</div>
+  </div>
+  <div class="nav-item" onclick="switchTabNav('compras',this)">
+    <div class="nav-icon">🧾</div>Compras
+  </div>
+  <div class="nav-item" onclick="switchTabNav('semana',this)">
+    <div class="nav-icon">📊</div>Semana
+  </div>
+  <div class="nav-item" onclick="switchTabNav('horarios',this)">
+    <div class="nav-icon">🕐</div>Horarios
+  </div>
+  <div class="nav-item" onclick="switchTabNav('precios',this)">
+    <div class="nav-icon">💲</div>Precios
+  </div>
+</div>
+
+<script>
+// ══════════ CONFIG ══════════
+const SUPA_URL = "https://ngobtpdhlqxvocesufbw.supabase.co";
+const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nb2J0cGRobHF4dm9jZXN1ZmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTQ1MjEsImV4cCI6MjA5NjE5MDUyMX0.EciHeMh0tMKwbznfLq7PbAaS-CHmS6wdPlAX_OE9WG4";
+const DIAS = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
+const DIAS_FULL = ['LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO'];
+
+let productosCache = [];
+let pendientesCache = [];
+let refreshTimer = null;
+
+// ══════════ API ══════════
+async function api(path, method='GET', body=null) {
+  const opts = {
+    method,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(SUPA_URL + path, opts);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  if (r.status === 204) return [];
+  return r.json();
+}
+
+// ══════════ TIEMPO REAL ══════════
+function updateClock() {
+  const now = new Date();
+  document.getElementById('header-time').textContent =
+    now.toLocaleDateString('es-EC', {weekday:'long', day:'numeric', month:'long'}) +
+    ' · ' + now.toLocaleTimeString('es-EC', {hour:'2-digit', minute:'2-digit'});
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+// Auto-refresh ventas cada 60 segundos
+setInterval(() => {
+  const activeTab = document.querySelector('.page.active');
+  if (activeTab && activeTab.id === 'page-ventas') cargarVentas();
+  cargarBadgeInventario();
+}, 60000);
+
+// ══════════ TABS ══════════
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const tabs = ['ventas','inventario','compras','semana','horarios','precios'];
+  document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)]?.classList.add('active');
+  document.getElementById('page-'+tab)?.classList.add('active');
+  loadTab(tab);
+}
+
+function switchTabNav(tab, el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  switchTab(tab);
+}
+
+function loadTab(tab) {
+  if (tab === 'ventas')     cargarVentas();
+  if (tab === 'inventario') cargarPendientes();
+  if (tab === 'compras')    cargarCompras();
+  if (tab === 'semana')     cargarSemana();
+  if (tab === 'horarios')   cargarHorarios();
+  if (tab === 'precios')    cargarPrecios();
+}
+
+// ══════════ VENTAS ══════════
+async function cargarVentas() {
+  try {
+    const hoy = new Date().toISOString().slice(0,10);
+    const data = await api(`/rest/v1/ventas?fecha=eq.${hoy}&anulada=eq.false&select=id,hora,total,forma_pago,cliente&order=id.desc`);
+
+    const total = data.reduce((s,v) => s + (v.total||0), 0);
+    const count = data.length;
+    const promedio = count > 0 ? total/count : 0;
+
+    document.getElementById('v-total').textContent = '$' + total.toFixed(2);
+    document.getElementById('v-count').textContent = count;
+    document.getElementById('v-fecha').textContent = hoy;
+    document.getElementById('v-promedio').textContent = '$' + promedio.toFixed(2);
+    document.getElementById('v-update').textContent = new Date().toLocaleTimeString('es-EC', {hour:'2-digit',minute:'2-digit'});
+
+    if (data.length > 0) {
+      const ultima = data[0];
+      document.getElementById('v-ultima').textContent = '$' + (ultima.total||0).toFixed(2);
+      document.getElementById('v-ultima-hora').textContent = (ultima.hora||'').substring(0,5);
+    }
+
+    // Top productos
+    const detalles = await api(`/rest/v1/venta_detalle?select=descripcion,cantidad,subtotal,venta_id,ventas!inner(fecha,anulada)&ventas.fecha=eq.${hoy}&ventas.anulada=eq.false&order=subtotal.desc`);
+
+    // Agrupar por producto
+    const grupos = {};
+    detalles.forEach(d => {
+      if (!grupos[d.descripcion]) grupos[d.descripcion] = {cant:0, total:0};
+      grupos[d.descripcion].cant  += d.cantidad||0;
+      grupos[d.descripcion].total += d.subtotal||0;
+    });
+
+    const top = Object.entries(grupos)
+      .sort((a,b) => b[1].total - a[1].total)
+      .slice(0, 8);
+
+    const topEl = document.getElementById('top-productos');
+    if (top.length === 0) {
+      topEl.innerHTML = '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>';
+    } else {
+      topEl.innerHTML = top.map(([nombre, v], i) => `
+        <div class="product-row">
+          <div class="product-rank">${i+1}</div>
+          <div class="product-info">
+            <div class="product-name">${nombre}</div>
+            <div class="product-meta">${v.cant.toFixed(0)} unidades</div>
+          </div>
+          <div class="product-amount">$${v.total.toFixed(2)}</div>
+        </div>`).join('');
+    }
+
+    // Últimas 8 ventas
+    const ultimasEl = document.getElementById('ultimas-ventas');
+    ultimasEl.innerHTML = data.slice(0,8).map(v => `
+      <div class="product-row">
+        <div class="product-info">
+          <div class="product-name">${v.cliente || 'Consumidor final'}</div>
+          <div class="product-meta">${(v.hora||'').substring(0,5)} · ${v.forma_pago||'efectivo'}</div>
+        </div>
+        <div class="product-amount">$${(v.total||0).toFixed(2)}</div>
+      </div>`).join('');
+
+  } catch(e) {
+    showToast('Error cargando ventas', 'err');
+  }
+}
+
+// ══════════ INVENTARIO PENDIENTE ══════════
+async function cargarPendientes() {
+  try {
+    const data = await api('/rest/v1/inventario_pendiente?order=fecha_cambio.desc&limit=50');
+    pendientesCache = data;
+
+    const pendientes  = data.filter(d => d.estado === 'PENDIENTE');
+    const aprobadosHoy = data.filter(d => {
+      return d.estado === 'APROBADO' &&
+             d.fecha_resolucion &&
+             d.fecha_resolucion.slice(0,10) === new Date().toISOString().slice(0,10);
+    });
+
+    document.getElementById('inv-pendientes').textContent = pendientes.length;
+    document.getElementById('inv-aprobados').textContent  = aprobadosHoy.length;
+
+    // Badge nav
+    const badge = document.getElementById('badge-inv');
+    if (pendientes.length > 0) {
+      badge.textContent = pendientes.length;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    const el = document.getElementById('pendientes-list');
+    if (data.length === 0) {
+      el.innerHTML = '<div class="empty"><div class="icon">✅</div><p>Sin cambios pendientes</p></div>';
+      return;
+    }
+
+    el.innerHTML = data.map(item => {
+      const diff = (item.stock_nuevo||0) - (item.stock_anterior||0);
+      const esPendiente = item.estado === 'PENDIENTE';
+      return `
+      <div class="pending-item ${item.estado?.toLowerCase()}" id="pend-${item.id}">
+        <div class="pending-header">
+          <div class="pending-name">${item.producto_nombre || '—'}</div>
+          <div class="pending-time">${formatTime(item.fecha_cambio)}</div>
+        </div>
+        <div class="pending-stocks">
+          <div class="stock-box anterior">
+            <div class="lbl">Anterior</div>
+            <div class="val">${(item.stock_anterior||0).toFixed(0)}</div>
+          </div>
+          <div class="stock-box nuevo">
+            <div class="lbl">Nuevo</div>
+            <div class="val">${(item.stock_nuevo||0).toFixed(0)}</div>
+          </div>
+          <div class="stock-box diff">
+            <div class="lbl">Diferencia</div>
+            <div class="val ${diff < 0 ? 'neg' : ''}">${diff >= 0 ? '+' : ''}${diff.toFixed(0)}</div>
+          </div>
+        </div>
+        <div class="pending-supervisor">👤 ${item.supervisor_nombre || 'Supervisor'}</div>
+        ${esPendiente ? `
+        <div class="pending-actions">
+          <button class="btn-approve" onclick="resolverPendiente(${item.id}, 'APROBADO')">✓ Aprobar</button>
+          <button class="btn-reject"  onclick="resolverPendiente(${item.id}, 'RECHAZADO')">✗ Rechazar</button>
+        </div>` : `
+        <div><span class="status-tag ${item.estado?.toLowerCase()}">${item.estado}</span></div>
+        `}
+      </div>`;
+    }).join('');
+
+  } catch(e) {
+    document.getElementById('pendientes-list').innerHTML =
+      '<div class="empty"><div class="icon">📦</div><p>Sin datos de pendientes.<br>La app Android debe guardar aquí.</p></div>';
+  }
+}
+
+async function resolverPendiente(id, estado) {
+  try {
+    const item = pendientesCache.find(p => p.id === id);
+    if (!item) return;
+
+    // Actualizar estado en Supabase
+    await api(`/rest/v1/inventario_pendiente?id=eq.${id}`, 'PATCH', {
+      estado,
+      fecha_resolucion: new Date().toISOString()
+    });
+
+    // Si aprobado, actualizar stock real
+    if (estado === 'APROBADO' && item.producto_id) {
+      await api(`/rest/v1/productos?id=eq.${item.producto_id}`, 'PATCH', {
+        stock: item.stock_nuevo,
+        fecha_modificacion: new Date().toISOString()
+      });
+    }
+
+    showToast(estado === 'APROBADO' ? '✓ Aprobado y stock actualizado' : '✗ Cambio rechazado',
+              estado === 'APROBADO' ? 'ok' : 'err');
+    cargarPendientes();
+  } catch(e) {
+    showToast('Error al procesar', 'err');
+  }
+}
+
+async function cargarBadgeInventario() {
+  try {
+    const data = await api('/rest/v1/inventario_pendiente?estado=eq.PENDIENTE&select=id');
+    const badge = document.getElementById('badge-inv');
+    if (data.length > 0) {
+      badge.textContent = data.length;
+      badge.style.display = 'block';
+      document.getElementById('inv-pendientes').textContent = data.length;
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch(e) {}
+}
+
+// ══════════ COMPRAS ══════════
+async function cargarCompras() {
+  try {
+    const hoy = new Date();
+    const mesInicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().slice(0,10);
+
+    const compras = await api(`/rest/v1/compras?fecha=gte.${mesInicio}&estado=eq.confirmada&order=id.desc&limit=20`);
+    const totalMes = compras.reduce((s,c) => s+(c.total_con_iva||0), 0);
+    document.getElementById('c-mes').textContent = '$' + totalMes.toFixed(2);
+
+    // Cuentas por pagar
+    const cuentas = await api("/rest/v1/cuentas_pagar?estado=eq.pendiente&order=saldo.desc");
+    const totalDeuda = cuentas.reduce((s,c) => s+(c.saldo||0), 0);
+    document.getElementById('c-deuda').textContent = '$' + totalDeuda.toFixed(2);
+
+    // Lista compras
+    const comprasEl = document.getElementById('compras-list');
+    if (compras.length === 0) {
+      comprasEl.innerHTML = '<div class="empty"><div class="icon">🧾</div><p>Sin compras este mes</p></div>';
+    } else {
+      comprasEl.innerHTML = compras.map(c => `
+        <div class="compra-row">
+          <div class="compra-icon">🏪</div>
+          <div class="compra-info">
+            <div class="compra-proveedor">${c.proveedor_nombre||'—'}</div>
+            <div class="compra-meta">${c.fecha} · ${c.numero_factura||'S/N'}</div>
+          </div>
+          <div class="compra-monto">$${(c.total_con_iva||0).toFixed(2)}</div>
+        </div>`).join('');
+    }
+
+    // Cuentas
+    const cuentasEl = document.getElementById('cuentas-list');
+    if (cuentas.length === 0) {
+      cuentasEl.innerHTML = '<div class="empty"><div class="icon">✅</div><p>Sin deudas pendientes</p></div>';
+    } else {
+      cuentasEl.innerHTML = cuentas.map(c => `
+        <div class="compra-row">
+          <div class="compra-icon">⚠️</div>
+          <div class="compra-info">
+            <div class="compra-proveedor">${c.proveedor_nombre}</div>
+            <div class="compra-meta">Vence: ${c.fecha_vencimiento||'—'}</div>
+          </div>
+          <div class="compra-monto" style="color:var(--red)">$${(c.saldo||0).toFixed(2)}</div>
+        </div>`).join('');
+    }
+
+  } catch(e) {
+    showToast('Error cargando compras', 'err');
+  }
+}
+
+// ══════════ SEMANA ══════════
+async function cargarSemana() {
+  try {
+    // Calcular últimas 8 semanas de ventas
+    const semanas = [];
+    const hoy = new Date();
+
+    for (let i = 0; i < 8; i++) {
+      const fin   = new Date(hoy);
+      fin.setDate(hoy.getDate() - i * 7);
+      const inicio = new Date(fin);
+      inicio.setDate(fin.getDate() - 6);
+
+      const fi = inicio.toISOString().slice(0,10);
+      const ff = fin.toISOString().slice(0,10);
+
+      const data = await api(`/rest/v1/ventas?fecha=gte.${fi}&fecha=lte.${ff}&anulada=eq.false&select=total`);
+      const total = data.reduce((s,v) => s+(v.total||0), 0);
+      semanas.push({ inicio: fi, fin: ff, total, count: data.length });
+    }
+
+    const maxTotal = Math.max(...semanas.map(s => s.total), 1);
+
+    document.getElementById('s-semana').textContent    = '$' + semanas[0].total.toFixed(2);
+    document.getElementById('s-anterior').textContent  = '$' + (semanas[1]?.total||0).toFixed(2);
+    document.getElementById('s-utilidad').textContent  = semanas[0].count + ' ventas';
+    document.getElementById('s-transacciones').textContent = semanas[0].count;
+
+    const el = document.getElementById('semanas-list');
+    el.innerHTML = semanas.map((s, i) => `
+      <div class="semana-bar">
+        <div class="semana-header">
+          <div class="semana-label">${i === 0 ? 'Esta semana' : i === 1 ? 'Semana pasada' : s.inicio + ' al ' + s.fin}</div>
+          <div class="semana-total">$${s.total.toFixed(2)}</div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${(s.total/maxTotal*100).toFixed(1)}%"></div>
+        </div>
+        <div class="semana-stats">
+          <span>${s.count} transacciones</span>
+          <span>Prom: $${s.count > 0 ? (s.total/s.count).toFixed(2) : '0.00'}</span>
+        </div>
+      </div>`).join('');
+
+  } catch(e) {
+    showToast('Error cargando semana', 'err');
+  }
+}
+
+// ══════════ HORARIOS ══════════
+async function cargarHorarios() {
+  try {
+    const data = await api('/rest/v1/supervisores?order=id');
+    const el = document.getElementById('supervisores-list');
+
+    if (data.length === 0) {
+      el.innerHTML = '<div class="empty"><div class="icon">👤</div><p>Sin supervisores registrados</p></div>';
+      return;
+    }
+
+    el.innerHTML = data.map(s => {
+      const diasActivos = (s.dias||'').split(',');
+      return `
+      <div class="supervisor-card">
+        <div class="sup-header">
+          <div>
+            <div class="sup-name">${s.nombre}</div>
+            <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">PIN: ${s.pin}</div>
+          </div>
+          <label class="sup-toggle">
+            <input type="checkbox" ${s.activo ? 'checked' : ''} onchange="toggleSupervisor(${s.id}, this.checked)">
+            <span class="sup-slider"></span>
+          </label>
+        </div>
+        <div class="sup-schedule">
+          <input type="time" class="time-input" value="${s.hora_inicio||'08:00'}" id="hi-${s.id}">
+          <div style="color:var(--muted);font-size:12px;align-self:center">→</div>
+          <input type="time" class="time-input" value="${s.hora_fin||'20:00'}" id="hf-${s.id}">
+        </div>
+        <div class="days-grid">
+          ${DIAS.map((d,i) => `
+            <div class="day-btn ${diasActivos.includes(DIAS_FULL[i]) ? 'active' : ''}"
+              onclick="toggleDia(this, '${DIAS_FULL[i]}')">${d}</div>
+          `).join('')}
+        </div>
+        <button class="btn-save-sup" onclick="guardarHorario(${s.id})">Guardar horario</button>
+      </div>`;
+    }).join('');
+
+  } catch(e) {
+    showToast('Error cargando horarios', 'err');
+  }
+}
+
+function toggleDia(el, dia) {
+  el.classList.toggle('active');
+}
+
+async function toggleSupervisor(id, activo) {
+  try {
+    await api(`/rest/v1/supervisores?id=eq.${id}`, 'PATCH', { activo });
+    showToast(activo ? '✓ Supervisor activado' : 'Supervisor desactivado', activo ? 'ok' : 'warn');
+  } catch(e) {
+    showToast('Error', 'err');
+  }
+}
+
+async function guardarHorario(id) {
+  try {
+    const hi = document.getElementById('hi-'+id)?.value || '08:00';
+    const hf = document.getElementById('hf-'+id)?.value || '20:00';
+
+    // Recoger días activos
+    const card = document.querySelector(`#hi-${id}`)?.closest('.supervisor-card');
+    const diasActivos = [...card.querySelectorAll('.day-btn.active')]
+      .map(el => DIAS_FULL[DIAS.indexOf(el.textContent)]);
+
+    await api(`/rest/v1/supervisores?id=eq.${id}`, 'PATCH', {
+      hora_inicio: hi,
+      hora_fin:    hf,
+      dias:        diasActivos.join(',')
+    });
+    showToast('✓ Horario guardado', 'ok');
+  } catch(e) {
+    showToast('Error al guardar', 'err');
+  }
+}
+
+async function agregarSupervisor() {
+  const nombre = prompt('Nombre del supervisor:');
+  if (!nombre) return;
+  const pin = prompt('PIN (4 dígitos):');
+  if (!pin || pin.length < 4) { showToast('PIN inválido', 'err'); return; }
+
+  try {
+    await api('/rest/v1/supervisores', 'POST', {
+      nombre: nombre.toUpperCase(),
+      pin,
+      hora_inicio: '08:00',
+      hora_fin: '20:00',
+      dias: 'LUNES,MARTES,MIERCOLES,JUEVES,VIERNES,SABADO',
+      activo: true
+    });
+    showToast('✓ Supervisor agregado', 'ok');
+    cargarHorarios();
+  } catch(e) {
+    showToast('Error al agregar', 'err');
+  }
+}
+
+// ══════════ PRECIOS ══════════
+async function cargarPrecios() {
+  try {
+    const data = await api('/rest/v1/productos?select=id,nombre,pvp,codigo_barra&activo=eq.true&order=nombre&limit=500');
+    productosCache = data;
+    document.getElementById('precio-count').textContent = data.length;
+    renderPrecios(data);
+  } catch(e) {
+    showToast('Error cargando precios', 'err');
+  }
+}
+
+function renderPrecios(lista) {
+  const el = document.getElementById('precios-list');
+  el.innerHTML = lista.slice(0, 100).map(p => `
+    <div class="precio-row">
+      <div class="precio-nombre">${p.nombre}</div>
+      <input type="number" class="precio-input" value="${(p.pvp||0).toFixed(2)}"
+        step="0.01" inputmode="decimal" id="pvp-${p.id}">
+      <button class="btn-precio-save" onclick="guardarPrecio(${p.id})">✓</button>
+    </div>`).join('');
+}
+
+function filtrarPrecios(txt) {
+  if (!txt || txt.length < 2) {
+    renderPrecios(productosCache);
+    return;
+  }
+  const filtered = productosCache.filter(p =>
+    p.nombre.toLowerCase().includes(txt.toLowerCase()) ||
+    (p.codigo_barra||'').includes(txt)
+  );
+  document.getElementById('precio-count').textContent = filtered.length;
+  renderPrecios(filtered);
+}
+
+async function guardarPrecio(id) {
+  const input = document.getElementById('pvp-'+id);
+  if (!input) return;
+  const pvp = parseFloat(input.value);
+  if (isNaN(pvp) || pvp < 0) { showToast('Precio inválido', 'err'); return; }
+
+  try {
+    await api(`/rest/v1/productos?id=eq.${id}`, 'PATCH', { pvp });
+    showToast('✓ Precio actualizado', 'ok');
+    // Actualizar caché
+    const idx = productosCache.findIndex(p => p.id === id);
+    if (idx >= 0) productosCache[idx].pvp = pvp;
+  } catch(e) {
+    showToast('Error al guardar precio', 'err');
+  }
+}
+
+// ══════════ HELPERS ══════════
+function formatTime(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  const hoy = new Date().toISOString().slice(0,10);
+  if (iso.slice(0,10) === hoy) {
+    return d.toLocaleTimeString('es-EC', {hour:'2-digit', minute:'2-digit'});
+  }
+  return d.toLocaleDateString('es-EC', {day:'numeric', month:'short'}) + ' ' +
+         d.toLocaleTimeString('es-EC', {hour:'2-digit', minute:'2-digit'});
+}
+
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ══════════ INIT ══════════
+cargarVentas();
+cargarBadgeInventario();
+</script>
+</body>
+</html>
