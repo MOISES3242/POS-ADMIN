@@ -250,7 +250,11 @@ async function api(path, method='GET', body=null) {
   return r.json();
 }
 
-function hoy() { return new Date().toISOString().slice(0,10); }
+function hoy() {
+  const now = new Date();
+  const ec = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+  return ec.toISOString().slice(0,10);
+}
 
 function clock() {
   const n = new Date();
