@@ -296,30 +296,55 @@ async function loadVentas() {
       document.getElementById('v-ulth').textContent = (data[0].hora||'').substring(0,5);
     }
  
-    // Top productos via venta_detalle
-    const det = await api(`/rest/v1/venta_detalle?select=descripcion,cantidad,subtotal,ventas!inner(fecha,anulada)&ventas.fecha=eq.${fecha}&ventas.anulada=eq.0`);
-    const grupos = {};
-    det.forEach(d => {
-      const k = d.descripcion||'Sin nombre';
-      if (!grupos[k]) grupos[k] = {cant:0,total:0};
-      grupos[k].cant  += parseFloat(d.cantidad||0);
-      grupos[k].total += parseFloat(d.subtotal||0);
-    });
-    const top = Object.entries(grupos).sort((a,b)=>b[1].total-a[1].total).slice(0,8);
-    const topEl = document.getElementById('top-prod');
-    topEl.innerHTML = top.length === 0
-      ? '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>'
-      : top.map(([n,v],i)=>`<div class="row"><div class="row-rank">${i+1}</div><div class="row-info"><div class="row-name">${n}</div><div class="row-meta">${v.cant.toFixed(0)} und</div></div><div class="row-amount">$${v.total.toFixed(2)}</div></div>`).join('');
+    // Top productos — obtener IDs de ventas de hoy primero
+    const ventaIds = data.map(v=>v.id);
+    let topEl = document.getElementById('top-prod');
+    if (ventaIds.length === 0) {
+      topEl.innerHTML = '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>';
+    } else {
+      // Pedir detalles de las ventas de hoy (máximo 200 ventas)
+      const ids200 = ventaIds.slice(0,200);
+      const minId = Math.min(...ids200);
+      const maxId = Math.max(...ids200);
+      const det = await api(`/rest/v1/venta_detalle?venta_id=gte.${minId}&venta_id=lte.${maxId}&select=descripcion,cantidad,subtotal,venta_id&limit=2000`);
+      // Filtrar solo las que son de hoy
+      const idsSet = new Set(ids200);
+      const grupos = {};
+      det.filter(d=>idsSet.has(d.venta_id)).forEach(d => {
+        const k = d.descripcion||'Sin nombre';
+        if (!grupos[k]) grupos[k] = {cant:0,total:0};
+        grupos[k].cant  += parseFloat(d.cantidad||0);
+        grupos[k].total += parseFloat(d.subtotal||0);
+      });
+      const top = Object.entries(grupos).sort((a,b)=>b[1].total-a[1].total).slice(0,8);
+      topEl.innerHTML = top.length === 0
+        ? '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>'
+        : top.map(([n,v],i)=>`<div class="row"><div class="row-rank">${i+1}</div><div class="row-info"><div class="row-name">${n}</div><div class="row-meta">${v.cant.toFixed(0)} und</div></div><div class="row-amount">$${v.total.toFixed(2)}</div></div>`).join('');
+    }
  
-    // Últimas ventas
-    document.getElementById('ult-ventas').innerHTML = data.slice(0,10).map(v=>`
-      <div class="row">
-        <div class="row-info">
-          <div class="row-name">${v.cliente||'Consumidor final'}</div>
-          <div class="row-meta">${(v.hora||'').substring(0,5)} · ${v.forma_pago||'efectivo'}</div>
-        </div>
-        <div class="row-amount">$${(v.total||0).toFixed(2)}</div>
-      </div>`).join('');
+    // Últimas ventas con detalle de productos
+    const ultEl = document.getElementById('ult-ventas');
+    const ult10 = data.slice(0,15);
+    if (ult10.length > 0) {
+      const minId2 = Math.min(...ult10.map(v=>v.id));
+      const maxId2 = Math.max(...ult10.map(v=>v.id));
+      const det2 = await api(`/rest/v1/venta_detalle?venta_id=gte.${minId2}&venta_id=lte.${maxId2}&select=descripcion,cantidad,subtotal,venta_id&limit=500`);
+      const detMap = {};
+      det2.forEach(d => {
+        if (!detMap[d.venta_id]) detMap[d.venta_id] = [];
+        detMap[d.venta_id].push(d);
+      });
+      ultEl.innerHTML = ult10.map(v=>{
+        const prods = (detMap[v.id]||[]).map(d=>`${d.descripcion} x${parseFloat(d.cantidad||0).toFixed(0)}`).join(', ');
+        return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">${(v.hora||'').substring(0,5)} · ${v.forma_pago||'efectivo'}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--green)">$${(v.total||0).toFixed(2)}</div>
+          </div>
+          <div style="font-size:12px;color:var(--text);line-height:1.4">${prods||'Sin detalle'}</div>
+        </div>`;
+      }).join('');
+    }
   } catch(e) {
     document.getElementById('top-prod').innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>Error: ${e.message}</p></div>`;
   }
@@ -549,3 +574,4 @@ loadBadge();
 </script>
 </body>
 </html>
+ 
