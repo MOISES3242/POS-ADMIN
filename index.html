@@ -103,7 +103,7 @@ input:checked+.slider::before{background:var(--green);left:21px}
 </style>
 </head>
 <body>
- 
+
 <div class="header">
   <div class="header-top">
     <div class="brand">POS<span>MAS</span> <span style="font-size:13px;font-weight:400;color:var(--muted)">Admin</span></div>
@@ -111,7 +111,7 @@ input:checked+.slider::before{background:var(--green);left:21px}
   </div>
   <div class="header-sub" id="htime">—</div>
 </div>
- 
+
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="goTab('ventas')">💰 Ventas</div>
   <div class="nav-tab" onclick="goTab('inventario')">📦 Inventario</div>
@@ -120,7 +120,7 @@ input:checked+.slider::before{background:var(--green);left:21px}
   <div class="nav-tab" onclick="goTab('horarios')">🕐 Horarios</div>
   <div class="nav-tab" onclick="goTab('precios')">💲 Precios</div>
 </div>
- 
+
 <!-- VENTAS -->
 <div id="page-ventas" class="page active">
   <div class="section-header">
@@ -142,7 +142,7 @@ input:checked+.slider::before{background:var(--green);left:21px}
     <div id="ult-ventas"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
   </div>
 </div>
- 
+
 <!-- INVENTARIO -->
 <div id="page-inventario" class="page">
   <div class="section-header">
@@ -155,7 +155,7 @@ input:checked+.slider::before{background:var(--green);left:21px}
   </div>
   <div id="pend-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
 </div>
- 
+
 <!-- COMPRAS -->
 <div id="page-compras" class="page">
   <div class="section-header">
@@ -175,7 +175,7 @@ input:checked+.slider::before{background:var(--green);left:21px}
     <div id="cuentas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
   </div>
 </div>
- 
+
 <!-- SEMANA -->
 <div id="page-semana" class="page">
   <div class="section-header">
@@ -193,14 +193,14 @@ input:checked+.slider::before{background:var(--green);left:21px}
     <div id="semanas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
   </div>
 </div>
- 
+
 <!-- HORARIOS -->
 <div id="page-horarios" class="page">
   <div class="section-header"><div class="section-title">Supervisores</div></div>
   <div id="sup-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
   <button class="btn-add-sup" onclick="addSupervisor()">+ Agregar supervisor</button>
 </div>
- 
+
 <!-- PRECIOS -->
 <div id="page-precios" class="page">
   <div class="section-header"><div class="section-title">Cambiar precios</div></div>
@@ -212,9 +212,9 @@ input:checked+.slider::before{background:var(--green);left:21px}
     <div id="precios-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
   </div>
 </div>
- 
+
 <div class="toast" id="toast"></div>
- 
+
 <div class="bottom-nav">
   <div class="nav-item active" onclick="goTabNav('ventas',this)"><div class="nav-icon">💰</div>Ventas</div>
   <div class="nav-item" onclick="goTabNav('inventario',this)"><div class="nav-icon">📦</div>Inventario<div class="nav-badge" id="badge" style="display:none">0</div></div>
@@ -223,16 +223,16 @@ input:checked+.slider::before{background:var(--green);left:21px}
   <div class="nav-item" onclick="goTabNav('horarios',this)"><div class="nav-icon">🕐</div>Horarios</div>
   <div class="nav-item" onclick="goTabNav('precios',this)"><div class="nav-icon">💲</div>Precios</div>
 </div>
- 
+
 <script>
 const URL_S = "https://ngobtpdhlqxvocesufbw.supabase.co";
 const KEY_S = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nb2J0cGRobHF4dm9jZXN1ZmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTQ1MjEsImV4cCI6MjA5NjE5MDUyMX0.EciHeMh0tMKwbznfLq7PbAaS-CHmS6wdPlAX_OE9WG4";
 const DIAS_S = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
 const DIAS_F = ['LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO'];
- 
+
 let prodCache = [];
 let pendCache = [];
- 
+
 async function api(path, method='GET', body=null) {
   const opts = {
     method,
@@ -249,9 +249,9 @@ async function api(path, method='GET', body=null) {
   if (r.status === 204) return [];
   return r.json();
 }
- 
+
 function hoy() { return new Date().toISOString().slice(0,10); }
- 
+
 function clock() {
   const n = new Date();
   document.getElementById('htime').textContent =
@@ -263,7 +263,7 @@ setInterval(() => {
   if (document.getElementById('page-ventas').classList.contains('active')) loadVentas();
   loadBadge();
 }, 60000);
- 
+
 function goTab(tab) {
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -272,84 +272,93 @@ function goTab(tab) {
   document.getElementById('page-'+tab)?.classList.add('active');
   ({ventas:loadVentas,inventario:loadPendientes,compras:loadCompras,semana:loadSemana,horarios:loadHorarios,precios:loadPrecios})[tab]?.();
 }
- 
+
 function goTabNav(tab, el) {
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   el.classList.add('active');
   goTab(tab);
 }
- 
+
 // ── VENTAS ──
 async function loadVentas() {
   try {
     const fecha = hoy();
-    const data = await api(`/rest/v1/ventas?fecha=eq.${fecha}&anulada=eq.0&select=id,hora,total,forma_pago,cliente&order=id.desc`);
-    const total = data.reduce((s,v)=>s+(v.total||0),0);
-    const count = data.length;
+
+    // 1. Totales del día
+    const ventas = await api(`/rest/v1/ventas?fecha=eq.${fecha}&anulada=eq.0&select=id,hora,total,forma_pago,cliente&order=id.desc&limit=500`);
+    const total = ventas.reduce((s,v)=>s+(parseFloat(v.total)||0),0);
+    const count = ventas.length;
     document.getElementById('v-total').textContent = '$'+total.toFixed(2);
     document.getElementById('v-count').textContent = count;
     document.getElementById('v-fecha').textContent = fecha;
     document.getElementById('v-prom').textContent  = '$'+(count>0?total/count:0).toFixed(2);
     document.getElementById('v-upd').textContent   = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
-    if (data.length > 0) {
-      document.getElementById('v-ult').textContent  = '$'+(data[0].total||0).toFixed(2);
-      document.getElementById('v-ulth').textContent = (data[0].hora||'').substring(0,5);
+    if (ventas.length > 0) {
+      document.getElementById('v-ult').textContent  = '$'+(parseFloat(ventas[0].total)||0).toFixed(2);
+      document.getElementById('v-ulth').textContent = (ventas[0].hora||'').substring(0,5);
     }
- 
-    // Top productos — obtener IDs de ventas de hoy primero
-    const ventaIds = data.map(v=>v.id);
-    let topEl = document.getElementById('top-prod');
-    if (ventaIds.length === 0) {
-      topEl.innerHTML = '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>';
-    } else {
-      // Pedir detalles de las ventas de hoy (máximo 200 ventas)
-      const ids200 = ventaIds.slice(0,200);
-      const minId = Math.min(...ids200);
-      const maxId = Math.max(...ids200);
-      const det = await api(`/rest/v1/venta_detalle?venta_id=gte.${minId}&venta_id=lte.${maxId}&select=descripcion,cantidad,subtotal,venta_id&limit=2000`);
-      // Filtrar solo las que son de hoy
-      const idsSet = new Set(ids200);
-      const grupos = {};
-      det.filter(d=>idsSet.has(d.venta_id)).forEach(d => {
-        const k = d.descripcion||'Sin nombre';
-        if (!grupos[k]) grupos[k] = {cant:0,total:0};
-        grupos[k].cant  += parseFloat(d.cantidad||0);
-        grupos[k].total += parseFloat(d.subtotal||0);
-      });
-      const top = Object.entries(grupos).sort((a,b)=>b[1].total-a[1].total).slice(0,8);
-      topEl.innerHTML = top.length === 0
-        ? '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>'
-        : top.map(([n,v],i)=>`<div class="row"><div class="row-rank">${i+1}</div><div class="row-info"><div class="row-name">${n}</div><div class="row-meta">${v.cant.toFixed(0)} und</div></div><div class="row-amount">$${v.total.toFixed(2)}</div></div>`).join('');
+
+    if (count === 0) {
+      document.getElementById('top-prod').innerHTML = '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>';
+      document.getElementById('ult-ventas').innerHTML = '';
+      return;
     }
- 
-    // Últimas ventas con detalle de productos
-    const ultEl = document.getElementById('ult-ventas');
-    const ult10 = data.slice(0,15);
-    if (ult10.length > 0) {
-      const minId2 = Math.min(...ult10.map(v=>v.id));
-      const maxId2 = Math.max(...ult10.map(v=>v.id));
-      const det2 = await api(`/rest/v1/venta_detalle?venta_id=gte.${minId2}&venta_id=lte.${maxId2}&select=descripcion,cantidad,subtotal,venta_id&limit=500`);
-      const detMap = {};
-      det2.forEach(d => {
-        if (!detMap[d.venta_id]) detMap[d.venta_id] = [];
-        detMap[d.venta_id].push(d);
-      });
-      ultEl.innerHTML = ult10.map(v=>{
-        const prods = (detMap[v.id]||[]).map(d=>`${d.descripcion} x${parseFloat(d.cantidad||0).toFixed(0)}`).join(', ');
-        return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">${(v.hora||'').substring(0,5)} · ${v.forma_pago||'efectivo'}</div>
-            <div style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--green)">$${(v.total||0).toFixed(2)}</div>
+
+    // 2. Detalles — buscar por rango de IDs
+    const ids = ventas.map(v=>v.id);
+    const minId = Math.min(...ids);
+    const maxId = Math.max(...ids);
+    const idsSet = new Set(ids);
+
+    const detalles = await api(`/rest/v1/venta_detalle?venta_id=gte.${minId}&venta_id=lte.${maxId}&select=venta_id,descripcion,cantidad,subtotal&limit=5000`);
+    const detHoy = detalles.filter(d => idsSet.has(d.venta_id));
+
+    // 3. Top productos
+    const grupos = {};
+    detHoy.forEach(d => {
+      const k = (d.descripcion||'Sin nombre').trim();
+      if (!grupos[k]) grupos[k] = {cant:0,total:0};
+      grupos[k].cant  += parseFloat(d.cantidad||0);
+      grupos[k].total += parseFloat(d.subtotal||0);
+    });
+    const top = Object.entries(grupos).sort((a,b)=>b[1].total-a[1].total).slice(0,10);
+    document.getElementById('top-prod').innerHTML = top.length === 0
+      ? '<div class="empty"><div class="icon">🛒</div><p>Sin detalle disponible</p></div>'
+      : top.map(([n,v],i)=>`<div class="row">
+          <div class="row-rank">${i+1}</div>
+          <div class="row-info">
+            <div class="row-name">${n}</div>
+            <div class="row-meta">${v.cant.toFixed(0)} unidades</div>
           </div>
-          <div style="font-size:12px;color:var(--text);line-height:1.4">${prods||'Sin detalle'}</div>
-        </div>`;
-      }).join('');
-    }
+          <div class="row-amount">$${v.total.toFixed(2)}</div>
+        </div>`).join('');
+
+    // 4. Últimas ventas con productos
+    const detMap = {};
+    detHoy.forEach(d => {
+      if (!detMap[d.venta_id]) detMap[d.venta_id] = [];
+      detMap[d.venta_id].push(d);
+    });
+
+    document.getElementById('ult-ventas').innerHTML = ventas.slice(0,20).map(v => {
+      const prods = (detMap[v.id]||[])
+        .map(d=>`<span style="display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:2px 8px;margin:2px;font-size:11px">${(d.descripcion||'').trim()} ×${parseFloat(d.cantidad||0).toFixed(0)}</span>`)
+        .join('');
+      return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)">${(v.hora||'').substring(0,8)}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--green)">$${(parseFloat(v.total)||0).toFixed(2)}</div>
+        </div>
+        <div>${prods||'<span style="color:var(--muted);font-size:11px">Sin detalle</span>'}</div>
+      </div>`;
+    }).join('');
+
   } catch(e) {
     document.getElementById('top-prod').innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>Error: ${e.message}</p></div>`;
+    console.error(e);
   }
 }
- 
+
 // ── INVENTARIO PENDIENTE ──
 async function loadPendientes() {
   try {
@@ -362,7 +371,7 @@ async function loadPendientes() {
     const badge = document.getElementById('badge');
     badge.textContent = pend.length;
     badge.style.display = pend.length > 0 ? 'block' : 'none';
- 
+
     const el = document.getElementById('pend-list');
     if (data.length === 0) {
       el.innerHTML = '<div class="empty"><div class="icon">✅</div><p>Sin cambios pendientes</p></div>'; return;
@@ -386,7 +395,7 @@ async function loadPendientes() {
     document.getElementById('pend-list').innerHTML='<div class="empty"><div class="icon">📦</div><p>Sin datos pendientes</p></div>';
   }
 }
- 
+
 async function resolver(id, estado) {
   try {
     const item = pendCache.find(p=>p.id===id);
@@ -399,7 +408,7 @@ async function resolver(id, estado) {
     loadPendientes();
   } catch(e) { showToast('Error: '+e.message,'err'); }
 }
- 
+
 async function loadBadge() {
   try {
     const data = await api('/rest/v1/inventario_pendiente?estado=eq.PENDIENTE&select=id');
@@ -408,7 +417,7 @@ async function loadBadge() {
     b.style.display = data.length>0?'block':'none';
   } catch(e){}
 }
- 
+
 // ── COMPRAS ──
 async function loadCompras() {
   try {
@@ -417,23 +426,23 @@ async function loadCompras() {
     const compras = await api(`/rest/v1/compras?fecha=gte.${mesInicio}&estado=eq.confirmada&order=id.desc&limit=30`);
     const totalMes = compras.reduce((s,c)=>s+(c.total_con_iva||0),0);
     document.getElementById('c-mes').textContent = '$'+totalMes.toFixed(2);
- 
+
     const cuentas = await api('/rest/v1/cuentas_pagar?estado=eq.pendiente&order=saldo.desc');
     const totalDeuda = cuentas.reduce((s,c)=>s+(c.saldo||0),0);
     document.getElementById('c-deuda').textContent = '$'+totalDeuda.toFixed(2);
- 
+
     const cEl = document.getElementById('compras-list');
     cEl.innerHTML = compras.length===0
       ? '<div class="empty"><div class="icon">🧾</div><p>Sin compras este mes</p></div>'
       : compras.map(c=>`<div class="row"><div class="row-info"><div class="row-name">${c.proveedor_nombre||'—'}</div><div class="row-meta">${c.fecha} · ${c.numero_factura||'S/N'}</div></div><div class="row-amount" style="color:var(--purple)">$${(c.total_con_iva||0).toFixed(2)}</div></div>`).join('');
- 
+
     const qEl = document.getElementById('cuentas-list');
     qEl.innerHTML = cuentas.length===0
       ? '<div class="empty"><div class="icon">✅</div><p>Sin deudas pendientes</p></div>'
       : cuentas.map(c=>`<div class="row"><div class="row-info"><div class="row-name">${c.proveedor_nombre}</div><div class="row-meta">Vence: ${c.fecha_vencimiento||'—'}</div></div><div class="row-amount" style="color:var(--red)">$${(c.saldo||0).toFixed(2)}</div></div>`).join('');
   } catch(e) { showToast('Error compras: '+e.message,'err'); }
 }
- 
+
 // ── SEMANA ──
 async function loadSemana() {
   try {
@@ -465,7 +474,7 @@ async function loadSemana() {
       </div>`).join('');
   } catch(e) { showToast('Error semana: '+e.message,'err'); }
 }
- 
+
 // ── HORARIOS ──
 async function loadHorarios() {
   try {
@@ -490,11 +499,11 @@ async function loadHorarios() {
     }).join('');
   } catch(e) { showToast('Error horarios','err'); }
 }
- 
+
 async function toggleSup(id, activo) {
   try { await api(`/rest/v1/supervisores?id=eq.${id}`,'PATCH',{activo}); showToast(activo?'Activado':'Desactivado',activo?'ok':'warn'); } catch(e){}
 }
- 
+
 async function saveSup(id, btn) {
   try {
     const card = btn.closest('.sup-card');
@@ -505,7 +514,7 @@ async function saveSup(id, btn) {
     showToast('✓ Horario guardado','ok');
   } catch(e){ showToast('Error','err'); }
 }
- 
+
 async function addSupervisor() {
   const n = prompt('Nombre del supervisor:'); if(!n) return;
   const p = prompt('PIN (4 dígitos):'); if(!p||p.length<4){showToast('PIN inválido','err');return;}
@@ -514,7 +523,7 @@ async function addSupervisor() {
     showToast('✓ Supervisor agregado','ok'); loadHorarios();
   } catch(e){ showToast('Error','err'); }
 }
- 
+
 // ── PRECIOS ──
 async function loadPrecios() {
   try {
@@ -524,7 +533,7 @@ async function loadPrecios() {
     renderPrecios(data);
   } catch(e){ showToast('Error precios','err'); }
 }
- 
+
 function renderPrecios(lista) {
   document.getElementById('precios-list').innerHTML = lista.slice(0,100).map(p=>`
     <div class="precio-row">
@@ -533,13 +542,13 @@ function renderPrecios(lista) {
       <button class="btn-pvp" onclick="savePrecio(${p.id})">✓</button>
     </div>`).join('');
 }
- 
+
 function filterPrecios(txt) {
   const f = txt.length<2 ? prodCache : prodCache.filter(p=>p.nombre.toLowerCase().includes(txt.toLowerCase())||(p.codigo_barra||'').includes(txt));
   document.getElementById('p-count').textContent = f.length;
   renderPrecios(f);
 }
- 
+
 async function savePrecio(id) {
   const el = document.getElementById('pvp-'+id);
   if(!el) return;
@@ -552,7 +561,7 @@ async function savePrecio(id) {
     if(i>=0) prodCache[i].pvp=pvp;
   } catch(e){ showToast('Error','err'); }
 }
- 
+
 // ── HELPERS ──
 function fmtTime(iso) {
   if(!iso) return '—';
@@ -560,18 +569,17 @@ function fmtTime(iso) {
   if(iso.slice(0,10)===hoy()) return d.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
   return d.toLocaleDateString('es-EC',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
 }
- 
+
 let tTimer;
 function showToast(msg,type=''){
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast show '+(type||'');
   clearTimeout(tTimer); tTimer=setTimeout(()=>t.className='toast',3000);
 }
- 
+
 // INIT
 loadVentas();
 loadBadge();
 </script>
 </body>
 </html>
- 
