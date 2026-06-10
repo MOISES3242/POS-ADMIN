@@ -2,584 +2,119 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0d1117">
-<title>POSMAS Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Ventas</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
-:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--text:#e6edf3;--muted:#8b949e;--radius:14px}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased}
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px 10px;position:sticky;top:0;z-index:100}
-.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
-.brand{font-size:20px;font-weight:700;color:var(--text)}.brand span{color:var(--accent)}
-.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;display:inline-block;margin-right:5px}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
-.header-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
-.nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:62px;z-index:99}
-.nav-tabs::-webkit-scrollbar{display:none}
-.nav-tab{flex:0 0 auto;padding:10px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
-.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.page{display:none;padding:16px}.page.active{display:block}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 12px}
-.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.stat-value{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--text);line-height:1}
-.stat-value.green{color:var(--green)}.stat-value.red{color:var(--red)}.stat-value.blue{color:var(--accent)}.stat-value.yellow{color:var(--yellow)}
-.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
-.row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
-.row:last-child{border-bottom:none}
-.row-rank{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);min-width:20px;text-align:center}
-.row-info{flex:1;min-width:0}
-.row-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row-meta{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
-.row-amount{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--green);text-align:right;white-space:nowrap}
-.pending-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
-.pending-item.aprobado{border-color:var(--green)}.pending-item.rechazado{border-color:var(--red);opacity:.6}
-.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
-.pname{font-size:14px;font-weight:600;line-height:1.3;flex:1}
-.ptime{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;white-space:nowrap}
-.stocks{display:flex;gap:8px;margin-bottom:12px}
-.sbox{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center}
-.sbox .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
-.sbox .val{font-family:'Space Mono',monospace;font-size:20px;font-weight:700}
-.sbox.ant .val{color:var(--muted)}.sbox.nvo .val{color:var(--accent)}.sbox.dif .val{color:var(--green)}.sbox.dif .val.neg{color:var(--red)}
-.psup{font-size:11px;color:var(--muted);margin-bottom:10px}
-.pactions{display:flex;gap:8px}
-.btn-ok{flex:2;background:rgba(63,185,80,.15);border:1px solid var(--green);color:var(--green);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
-.btn-no{flex:1;background:rgba(248,81,73,.1);border:1px solid var(--red);color:var(--red);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
-.stag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-.stag.pendiente{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid rgba(210,153,34,.3)}
-.stag.aprobado{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
-.stag.rechazado{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.3)}
-.sup-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
-.sup-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.sup-name{font-size:15px;font-weight:600}
-.switch{position:relative;width:46px;height:26px;display:inline-block}.switch input{display:none}
-.slider{position:absolute;cursor:pointer;inset:0;background:var(--surface);border:1.5px solid var(--border);border-radius:13px;transition:.3s}
-.slider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:var(--muted);left:3px;top:50%;transform:translateY(-50%);transition:.3s}
-input:checked+.slider{background:rgba(63,185,80,.2);border-color:var(--green)}
-input:checked+.slider::before{background:var(--green);left:21px}
-.sched{display:flex;gap:8px;margin-bottom:10px}
-.tinput{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'Space Mono',monospace;font-size:14px;outline:none;text-align:center}
-.tinput:focus{border-color:var(--accent)}
-.days{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
-.day{padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
-.day.active{background:rgba(88,166,255,.15);border-color:var(--accent);color:var(--accent)}
-.btn-save-sup{width:100%;background:rgba(88,166,255,.15);border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
-.semana-bar{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
-.sbar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.sbar-label{font-size:13px;font-weight:600}
-.sbar-total{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--green)}
-.bar-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px}
-.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;transition:width .8s ease}
-.sbar-stats{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
-.btn-refresh{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.section-title{font-size:16px;font-weight:700;color:var(--text)}
-.update-time{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace}
-.loading{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
-.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:40px 20px;color:var(--muted)}.empty .icon{font-size:40px;margin-bottom:10px}.empty p{font-size:13px}
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border);border-radius:30px;padding:10px 20px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:var(--green);color:var(--green)}.toast.err{border-color:var(--red);color:var(--red)}.toast.warn{border-color:var(--yellow);color:var(--yellow)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:100}
-.nav-item{flex:1;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;transition:color .2s;position:relative}
-.nav-item.active{color:var(--accent)}.nav-item .nav-icon{font-size:20px}
-.nav-badge{position:absolute;top:4px;right:calc(50% - 18px);background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center}
-.precio-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
-.precio-row:last-child{border-bottom:none}
-.precio-nombre{flex:1;font-size:13px;font-weight:500}
-.precio-input{width:80px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--accent);font-family:'Space Mono',monospace;font-size:14px;font-weight:700;outline:none;text-align:center}
-.precio-input:focus{border-color:var(--accent)}
-.btn-pvp{background:rgba(88,166,255,.15);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
-.btn-add-sup{width:100%;background:rgba(63,185,80,.1);border:1px dashed var(--green);color:var(--green);border-radius:10px;padding:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;margin-top:4px}
+body{font-family:sans-serif;background:#0d1117;color:#e6edf3;padding:16px;margin:0}
+h2{color:#58a6ff;margin-bottom:16px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;margin-bottom:12px}
+.stat{font-size:28px;font-weight:700;color:#3fb950}
+.label{font-size:11px;color:#8b949e;text-transform:uppercase;margin-bottom:4px}
+.venta{padding:10px 0;border-bottom:1px solid #30363d}
+.venta:last-child{border-bottom:none}
+.vh{display:flex;justify-content:space-between;margin-bottom:4px}
+.hora{font-size:11px;color:#8b949e}
+.total{font-size:15px;font-weight:700;color:#3fb950}
+.prods{font-size:12px;color:#e6edf3}
+.tag{display:inline-block;background:#21262d;border:1px solid #30363d;border-radius:6px;padding:2px 8px;margin:2px;font-size:11px}
+.err{color:#f85149;padding:12px}
+button{background:#58a6ff;color:#000;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:12px}
+.loading{color:#8b949e;text-align:center;padding:20px}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-top">
-    <div class="brand">POS<span>MAS</span> <span style="font-size:13px;font-weight:400;color:var(--muted)">Admin</span></div>
-    <div style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>En vivo</div>
-  </div>
-  <div class="header-sub" id="htime">—</div>
+<h2>📊 Ventas del día</h2>
+<button onclick="cargar()">↻ Cargar ventas</button>
+
+<div class="card">
+  <div class="label">Total del día</div>
+  <div class="stat" id="total">—</div>
+</div>
+<div class="card">
+  <div class="label">Transacciones</div>
+  <div class="stat" id="count" style="color:#58a6ff">—</div>
 </div>
 
-<div class="nav-tabs">
-  <div class="nav-tab active" onclick="goTab('ventas')">💰 Ventas</div>
-  <div class="nav-tab" onclick="goTab('inventario')">📦 Inventario</div>
-  <div class="nav-tab" onclick="goTab('compras')">🧾 Compras</div>
-  <div class="nav-tab" onclick="goTab('semana')">📊 Semana</div>
-  <div class="nav-tab" onclick="goTab('horarios')">🕐 Horarios</div>
-  <div class="nav-tab" onclick="goTab('precios')">💲 Precios</div>
+<div class="card">
+  <div class="label" style="margin-bottom:10px">Últimas ventas con detalle</div>
+  <div id="lista"><div class="loading">Toca "Cargar ventas"</div></div>
 </div>
 
-<!-- VENTAS -->
-<div id="page-ventas" class="page active">
-  <div class="section-header">
-    <div class="section-title">Ventas del día</div>
-    <button class="btn-refresh" onclick="loadVentas()">↻</button>
-  </div>
-  <div class="stat-grid">
-    <div class="stat-box"><div class="stat-label">Total del día</div><div class="stat-value green" id="v-total">—</div><div class="stat-sub" id="v-fecha">—</div></div>
-    <div class="stat-box"><div class="stat-label">Transacciones</div><div class="stat-value blue" id="v-count">—</div><div class="stat-sub">ventas</div></div>
-    <div class="stat-box"><div class="stat-label">Ticket promedio</div><div class="stat-value yellow" id="v-prom">—</div><div class="stat-sub">por venta</div></div>
-    <div class="stat-box"><div class="stat-label">Última venta</div><div class="stat-value" id="v-ult" style="font-size:16px">—</div><div class="stat-sub" id="v-ulth">—</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Top productos hoy <span class="update-time" id="v-upd">—</span></div>
-    <div id="top-prod"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Últimas ventas</div>
-    <div id="ult-ventas"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-  </div>
-</div>
-
-<!-- INVENTARIO -->
-<div id="page-inventario" class="page">
-  <div class="section-header">
-    <div class="section-title">Pendientes de aprobación</div>
-    <button class="btn-refresh" onclick="loadPendientes()">↻</button>
-  </div>
-  <div class="stat-grid">
-    <div class="stat-box"><div class="stat-label">Pendientes</div><div class="stat-value yellow" id="inv-pend">0</div></div>
-    <div class="stat-box"><div class="stat-label">Aprobados hoy</div><div class="stat-value green" id="inv-apro">0</div></div>
-  </div>
-  <div id="pend-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-</div>
-
-<!-- COMPRAS -->
-<div id="page-compras" class="page">
-  <div class="section-header">
-    <div class="section-title">Compras</div>
-    <button class="btn-refresh" onclick="loadCompras()">↻</button>
-  </div>
-  <div class="stat-grid">
-    <div class="stat-box"><div class="stat-label">Este mes</div><div class="stat-value purple" id="c-mes">—</div></div>
-    <div class="stat-box"><div class="stat-label">Por pagar</div><div class="stat-value red" id="c-deuda">—</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Compras recientes</div>
-    <div id="compras-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Cuentas por pagar</div>
-    <div id="cuentas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-  </div>
-</div>
-
-<!-- SEMANA -->
-<div id="page-semana" class="page">
-  <div class="section-header">
-    <div class="section-title">Resumen semanal</div>
-    <button class="btn-refresh" onclick="loadSemana()">↻</button>
-  </div>
-  <div class="stat-grid">
-    <div class="stat-box"><div class="stat-label">Esta semana</div><div class="stat-value green" id="s-this">—</div></div>
-    <div class="stat-box"><div class="stat-label">Semana anterior</div><div class="stat-value blue" id="s-prev">—</div></div>
-    <div class="stat-box"><div class="stat-label">Mejor semana</div><div class="stat-value yellow" id="s-best">—</div></div>
-    <div class="stat-box"><div class="stat-label">Promedio semanal</div><div class="stat-value" id="s-avg">—</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Últimas 8 semanas</div>
-    <div id="semanas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-  </div>
-</div>
-
-<!-- HORARIOS -->
-<div id="page-horarios" class="page">
-  <div class="section-header"><div class="section-title">Supervisores</div></div>
-  <div id="sup-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-  <button class="btn-add-sup" onclick="addSupervisor()">+ Agregar supervisor</button>
-</div>
-
-<!-- PRECIOS -->
-<div id="page-precios" class="page">
-  <div class="section-header"><div class="section-title">Cambiar precios</div></div>
-  <div class="card" style="margin-bottom:12px">
-    <input type="text" id="buscar-p" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none" placeholder="🔍 Buscar producto..." oninput="filterPrecios(this.value)">
-  </div>
-  <div class="card">
-    <div class="card-title">Productos <span id="p-count" style="color:var(--accent);font-family:'Space Mono',monospace">—</span></div>
-    <div id="precios-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<div class="bottom-nav">
-  <div class="nav-item active" onclick="goTabNav('ventas',this)"><div class="nav-icon">💰</div>Ventas</div>
-  <div class="nav-item" onclick="goTabNav('inventario',this)"><div class="nav-icon">📦</div>Inventario<div class="nav-badge" id="badge" style="display:none">0</div></div>
-  <div class="nav-item" onclick="goTabNav('compras',this)"><div class="nav-icon">🧾</div>Compras</div>
-  <div class="nav-item" onclick="goTabNav('semana',this)"><div class="nav-icon">📊</div>Semana</div>
-  <div class="nav-item" onclick="goTabNav('horarios',this)"><div class="nav-icon">🕐</div>Horarios</div>
-  <div class="nav-item" onclick="goTabNav('precios',this)"><div class="nav-icon">💲</div>Precios</div>
-</div>
+<div id="error" class="err" style="display:none"></div>
 
 <script>
-const URL_S = "https://ngobtpdhlqxvocesufbw.supabase.co";
-const KEY_S = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nb2J0cGRobHF4dm9jZXN1ZmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTQ1MjEsImV4cCI6MjA5NjE5MDUyMX0.EciHeMh0tMKwbznfLq7PbAaS-CHmS6wdPlAX_OE9WG4";
-const DIAS_S = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
-const DIAS_F = ['LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO'];
-
-let prodCache = [];
-let pendCache = [];
-
-async function api(path, method='GET', body=null) {
-  const opts = {
-    method,
-    headers: {
-      'apikey': KEY_S,
-      'Authorization': 'Bearer ' + KEY_S,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
-    }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(URL_S + path, opts);
-  if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + await r.text());
-  if (r.status === 204) return [];
-  return r.json();
-}
+const URL = "https://ngobtpdhlqxvocesufbw.supabase.co";
+const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nb2J0cGRobHF4dm9jZXN1ZmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTQ1MjEsImV4cCI6MjA5NjE5MDUyMX0.EciHeMh0tMKwbznfLq7PbAaS-CHmS6wdPlAX_OE9WG4";
 
 function hoy() { return new Date().toISOString().slice(0,10); }
 
-function clock() {
-  const n = new Date();
-  document.getElementById('htime').textContent =
-    n.toLocaleDateString('es-EC',{weekday:'long',day:'numeric',month:'long'}) +
-    ' · ' + n.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
-}
-setInterval(clock, 1000); clock();
-setInterval(() => {
-  if (document.getElementById('page-ventas').classList.contains('active')) loadVentas();
-  loadBadge();
-}, 60000);
-
-function goTab(tab) {
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const tabs=['ventas','inventario','compras','semana','horarios','precios'];
-  document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)]?.classList.add('active');
-  document.getElementById('page-'+tab)?.classList.add('active');
-  ({ventas:loadVentas,inventario:loadPendientes,compras:loadCompras,semana:loadSemana,horarios:loadHorarios,precios:loadPrecios})[tab]?.();
+async function get(path) {
+  const r = await fetch(URL + path, {
+    headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY }
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + await r.text());
+  return r.json();
 }
 
-function goTabNav(tab, el) {
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el.classList.add('active');
-  goTab(tab);
-}
+async function cargar() {
+  document.getElementById('lista').innerHTML = '<div class="loading">Cargando...</div>';
+  document.getElementById('error').style.display = 'none';
 
-// ── VENTAS ──
-async function loadVentas() {
   try {
     const fecha = hoy();
+    
+    // 1. Ventas de hoy
+    const ventas = await get(`/rest/v1/ventas?fecha=eq.${fecha}&anulada=eq.0&select=id,hora,total&order=id.desc&limit=200`);
+    
+    const totalDia = ventas.reduce((s,v) => s + parseFloat(v.total||0), 0);
+    document.getElementById('total').textContent = '$' + totalDia.toFixed(2);
+    document.getElementById('count').textContent = ventas.length;
 
-    // 1. Totales del día
-    const ventas = await api(`/rest/v1/ventas?fecha=eq.${fecha}&anulada=eq.0&select=id,hora,total,forma_pago,cliente&order=id.desc&limit=500`);
-    const total = ventas.reduce((s,v)=>s+(parseFloat(v.total)||0),0);
-    const count = ventas.length;
-    document.getElementById('v-total').textContent = '$'+total.toFixed(2);
-    document.getElementById('v-count').textContent = count;
-    document.getElementById('v-fecha').textContent = fecha;
-    document.getElementById('v-prom').textContent  = '$'+(count>0?total/count:0).toFixed(2);
-    document.getElementById('v-upd').textContent   = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
-    if (ventas.length > 0) {
-      document.getElementById('v-ult').textContent  = '$'+(parseFloat(ventas[0].total)||0).toFixed(2);
-      document.getElementById('v-ulth').textContent = (ventas[0].hora||'').substring(0,5);
-    }
-
-    if (count === 0) {
-      document.getElementById('top-prod').innerHTML = '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>';
-      document.getElementById('ult-ventas').innerHTML = '';
+    if (ventas.length === 0) {
+      document.getElementById('lista').innerHTML = '<div class="loading">Sin ventas hoy</div>';
       return;
     }
 
-    // 2. Detalles — buscar por rango de IDs
-    const ids = ventas.map(v=>v.id);
+    // 2. Detalles por rango de IDs
+    const ids = ventas.map(v => v.id);
     const minId = Math.min(...ids);
     const maxId = Math.max(...ids);
     const idsSet = new Set(ids);
 
-    const detalles = await api(`/rest/v1/venta_detalle?venta_id=gte.${minId}&venta_id=lte.${maxId}&select=venta_id,descripcion,cantidad,subtotal&limit=5000`);
-    const detHoy = detalles.filter(d => idsSet.has(d.venta_id));
-
-    // 3. Top productos
-    const grupos = {};
-    detHoy.forEach(d => {
-      const k = (d.descripcion||'Sin nombre').trim();
-      if (!grupos[k]) grupos[k] = {cant:0,total:0};
-      grupos[k].cant  += parseFloat(d.cantidad||0);
-      grupos[k].total += parseFloat(d.subtotal||0);
-    });
-    const top = Object.entries(grupos).sort((a,b)=>b[1].total-a[1].total).slice(0,10);
-    document.getElementById('top-prod').innerHTML = top.length === 0
-      ? '<div class="empty"><div class="icon">🛒</div><p>Sin detalle disponible</p></div>'
-      : top.map(([n,v],i)=>`<div class="row">
-          <div class="row-rank">${i+1}</div>
-          <div class="row-info">
-            <div class="row-name">${n}</div>
-            <div class="row-meta">${v.cant.toFixed(0)} unidades</div>
-          </div>
-          <div class="row-amount">$${v.total.toFixed(2)}</div>
-        </div>`).join('');
-
-    // 4. Últimas ventas con productos
+    const dets = await get(`/rest/v1/venta_detalle?venta_id=gte.${minId}&venta_id=lte.${maxId}&select=venta_id,descripcion,cantidad,subtotal&limit=5000`);
+    
+    // Agrupar detalles por venta
     const detMap = {};
-    detHoy.forEach(d => {
+    dets.filter(d => idsSet.has(d.venta_id)).forEach(d => {
       if (!detMap[d.venta_id]) detMap[d.venta_id] = [];
       detMap[d.venta_id].push(d);
     });
 
-    document.getElementById('ult-ventas').innerHTML = ventas.slice(0,20).map(v => {
-      const prods = (detMap[v.id]||[])
-        .map(d=>`<span style="display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:2px 8px;margin:2px;font-size:11px">${(d.descripcion||'').trim()} ×${parseFloat(d.cantidad||0).toFixed(0)}</span>`)
+    // Renderizar
+    document.getElementById('lista').innerHTML = ventas.slice(0,30).map(v => {
+      const prods = (detMap[v.id] || [])
+        .map(d => `<span class="tag">${(d.descripcion||'').trim()} ×${parseFloat(d.cantidad||0).toFixed(0)}</span>`)
         .join('');
-      return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)">${(v.hora||'').substring(0,8)}</div>
-          <div style="font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--green)">$${(parseFloat(v.total)||0).toFixed(2)}</div>
+      return `<div class="venta">
+        <div class="vh">
+          <span class="hora">${(v.hora||'').substring(0,8)}</span>
+          <span class="total">$${parseFloat(v.total||0).toFixed(2)}</span>
         </div>
-        <div>${prods||'<span style="color:var(--muted);font-size:11px">Sin detalle</span>'}</div>
+        <div class="prods">${prods || '<span style="color:#8b949e">Sin detalle</span>'}</div>
       </div>`;
     }).join('');
 
   } catch(e) {
-    document.getElementById('top-prod').innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>Error: ${e.message}</p></div>`;
-    console.error(e);
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('error').textContent = '⚠ Error: ' + e.message;
+    document.getElementById('lista').innerHTML = '';
   }
 }
 
-// ── INVENTARIO PENDIENTE ──
-async function loadPendientes() {
-  try {
-    const data = await api('/rest/v1/inventario_pendiente?order=fecha_cambio.desc&limit=50');
-    pendCache = data;
-    const pend = data.filter(d=>d.estado==='PENDIENTE');
-    const apro = data.filter(d=>d.estado==='APROBADO'&&(d.fecha_resolucion||'').slice(0,10)===hoy());
-    document.getElementById('inv-pend').textContent = pend.length;
-    document.getElementById('inv-apro').textContent = apro.length;
-    const badge = document.getElementById('badge');
-    badge.textContent = pend.length;
-    badge.style.display = pend.length > 0 ? 'block' : 'none';
-
-    const el = document.getElementById('pend-list');
-    if (data.length === 0) {
-      el.innerHTML = '<div class="empty"><div class="icon">✅</div><p>Sin cambios pendientes</p></div>'; return;
-    }
-    el.innerHTML = data.map(item => {
-      const diff = (item.stock_nuevo||0)-(item.stock_anterior||0);
-      const isPend = item.estado==='PENDIENTE';
-      return `<div class="pending-item ${(item.estado||'').toLowerCase()}" id="p-${item.id}">
-        <div class="ph"><div class="pname">${item.producto_nombre||'—'}</div><div class="ptime">${fmtTime(item.fecha_cambio)}</div></div>
-        <div class="stocks">
-          <div class="sbox ant"><div class="lbl">Anterior</div><div class="val">${(item.stock_anterior||0).toFixed(0)}</div></div>
-          <div class="sbox nvo"><div class="lbl">Nuevo</div><div class="val">${(item.stock_nuevo||0).toFixed(0)}</div></div>
-          <div class="sbox dif"><div class="lbl">Diferencia</div><div class="val ${diff<0?'neg':''}">${diff>=0?'+':''}${diff.toFixed(0)}</div></div>
-        </div>
-        <div class="psup">👤 ${item.supervisor_nombre||'Supervisor'}</div>
-        ${isPend ? `<div class="pactions"><button class="btn-ok" onclick="resolver(${item.id},'APROBADO')">✓ Aprobar</button><button class="btn-no" onclick="resolver(${item.id},'RECHAZADO')">✗ Rechazar</button></div>`
-          : `<span class="stag ${(item.estado||'').toLowerCase()}">${item.estado}</span>`}
-      </div>`;
-    }).join('');
-  } catch(e) {
-    document.getElementById('pend-list').innerHTML='<div class="empty"><div class="icon">📦</div><p>Sin datos pendientes</p></div>';
-  }
-}
-
-async function resolver(id, estado) {
-  try {
-    const item = pendCache.find(p=>p.id===id);
-    if (!item) return;
-    await api(`/rest/v1/inventario_pendiente?id=eq.${id}`,'PATCH',{estado,fecha_resolucion:new Date().toISOString()});
-    if (estado==='APROBADO'&&item.producto_id) {
-      await api(`/rest/v1/productos?id=eq.${item.producto_id}`,'PATCH',{stock:item.stock_nuevo,fecha_modificacion:new Date().toISOString()});
-    }
-    showToast(estado==='APROBADO'?'✓ Aprobado':'✗ Rechazado', estado==='APROBADO'?'ok':'err');
-    loadPendientes();
-  } catch(e) { showToast('Error: '+e.message,'err'); }
-}
-
-async function loadBadge() {
-  try {
-    const data = await api('/rest/v1/inventario_pendiente?estado=eq.PENDIENTE&select=id');
-    const b = document.getElementById('badge');
-    b.textContent = data.length;
-    b.style.display = data.length>0?'block':'none';
-  } catch(e){}
-}
-
-// ── COMPRAS ──
-async function loadCompras() {
-  try {
-    const hoyStr = hoy();
-    const mesInicio = hoyStr.slice(0,7)+'-01';
-    const compras = await api(`/rest/v1/compras?fecha=gte.${mesInicio}&estado=eq.confirmada&order=id.desc&limit=30`);
-    const totalMes = compras.reduce((s,c)=>s+(c.total_con_iva||0),0);
-    document.getElementById('c-mes').textContent = '$'+totalMes.toFixed(2);
-
-    const cuentas = await api('/rest/v1/cuentas_pagar?estado=eq.pendiente&order=saldo.desc');
-    const totalDeuda = cuentas.reduce((s,c)=>s+(c.saldo||0),0);
-    document.getElementById('c-deuda').textContent = '$'+totalDeuda.toFixed(2);
-
-    const cEl = document.getElementById('compras-list');
-    cEl.innerHTML = compras.length===0
-      ? '<div class="empty"><div class="icon">🧾</div><p>Sin compras este mes</p></div>'
-      : compras.map(c=>`<div class="row"><div class="row-info"><div class="row-name">${c.proveedor_nombre||'—'}</div><div class="row-meta">${c.fecha} · ${c.numero_factura||'S/N'}</div></div><div class="row-amount" style="color:var(--purple)">$${(c.total_con_iva||0).toFixed(2)}</div></div>`).join('');
-
-    const qEl = document.getElementById('cuentas-list');
-    qEl.innerHTML = cuentas.length===0
-      ? '<div class="empty"><div class="icon">✅</div><p>Sin deudas pendientes</p></div>'
-      : cuentas.map(c=>`<div class="row"><div class="row-info"><div class="row-name">${c.proveedor_nombre}</div><div class="row-meta">Vence: ${c.fecha_vencimiento||'—'}</div></div><div class="row-amount" style="color:var(--red)">$${(c.saldo||0).toFixed(2)}</div></div>`).join('');
-  } catch(e) { showToast('Error compras: '+e.message,'err'); }
-}
-
-// ── SEMANA ──
-async function loadSemana() {
-  try {
-    const semanas = [];
-    const base = new Date();
-    for (let i=0;i<8;i++) {
-      const fin   = new Date(base); fin.setDate(base.getDate()-i*7);
-      const ini   = new Date(fin);  ini.setDate(fin.getDate()-6);
-      const fi = ini.toISOString().slice(0,10);
-      const ff = fin.toISOString().slice(0,10);
-      const data = await api(`/rest/v1/ventas?fecha=gte.${fi}&fecha=lte.${ff}&anulada=eq.0&select=total`);
-      semanas.push({fi,ff,total:data.reduce((s,v)=>s+(v.total||0),0),count:data.length});
-    }
-    const max = Math.max(...semanas.map(s=>s.total),1);
-    const avg = semanas.reduce((s,w)=>s+w.total,0)/semanas.length;
-    const best = Math.max(...semanas.map(s=>s.total));
-    document.getElementById('s-this').textContent  = '$'+semanas[0].total.toFixed(2);
-    document.getElementById('s-prev').textContent  = '$'+(semanas[1]?.total||0).toFixed(2);
-    document.getElementById('s-best').textContent  = '$'+best.toFixed(2);
-    document.getElementById('s-avg').textContent   = '$'+avg.toFixed(2);
-    document.getElementById('semanas-list').innerHTML = semanas.map((s,i)=>`
-      <div class="semana-bar">
-        <div class="sbar-head">
-          <div class="sbar-label">${i===0?'Esta semana':i===1?'Semana pasada':s.fi+' → '+s.ff}</div>
-          <div class="sbar-total">$${s.total.toFixed(2)}</div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(s.total/max*100).toFixed(1)}%"></div></div>
-        <div class="sbar-stats"><span>${s.count} ventas</span><span>Prom $${s.count>0?(s.total/s.count).toFixed(2):'0.00'}</span></div>
-      </div>`).join('');
-  } catch(e) { showToast('Error semana: '+e.message,'err'); }
-}
-
-// ── HORARIOS ──
-async function loadHorarios() {
-  try {
-    const data = await api('/rest/v1/supervisores?order=id');
-    const el = document.getElementById('sup-list');
-    if (data.length===0) { el.innerHTML='<div class="empty"><div class="icon">👤</div><p>Sin supervisores</p></div>'; return; }
-    el.innerHTML = data.map(s => {
-      const da = (s.dias||'').split(',');
-      return `<div class="sup-card">
-        <div class="sup-head">
-          <div><div class="sup-name">${s.nombre}</div><div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">PIN: ${s.pin}</div></div>
-          <label class="switch"><input type="checkbox" ${s.activo?'checked':''} onchange="toggleSup(${s.id},this.checked)"><span class="slider"></span></label>
-        </div>
-        <div class="sched">
-          <input type="time" class="tinput" value="${s.hora_inicio||'08:00'}" id="hi-${s.id}">
-          <div style="color:var(--muted);font-size:12px;align-self:center">→</div>
-          <input type="time" class="tinput" value="${s.hora_fin||'20:00'}" id="hf-${s.id}">
-        </div>
-        <div class="days">${DIAS_S.map((d,i)=>`<div class="day ${da.includes(DIAS_F[i])?'active':''}" onclick="this.classList.toggle('active')">${d}</div>`).join('')}</div>
-        <button class="btn-save-sup" onclick="saveSup(${s.id},this)">Guardar horario</button>
-      </div>`;
-    }).join('');
-  } catch(e) { showToast('Error horarios','err'); }
-}
-
-async function toggleSup(id, activo) {
-  try { await api(`/rest/v1/supervisores?id=eq.${id}`,'PATCH',{activo}); showToast(activo?'Activado':'Desactivado',activo?'ok':'warn'); } catch(e){}
-}
-
-async function saveSup(id, btn) {
-  try {
-    const card = btn.closest('.sup-card');
-    const hi = document.getElementById('hi-'+id)?.value||'08:00';
-    const hf = document.getElementById('hf-'+id)?.value||'20:00';
-    const dias = [...card.querySelectorAll('.day.active')].map((el,i)=>DIAS_F[DIAS_S.indexOf(el.textContent)]).filter(Boolean);
-    await api(`/rest/v1/supervisores?id=eq.${id}`,'PATCH',{hora_inicio:hi,hora_fin:hf,dias:dias.join(',')});
-    showToast('✓ Horario guardado','ok');
-  } catch(e){ showToast('Error','err'); }
-}
-
-async function addSupervisor() {
-  const n = prompt('Nombre del supervisor:'); if(!n) return;
-  const p = prompt('PIN (4 dígitos):'); if(!p||p.length<4){showToast('PIN inválido','err');return;}
-  try {
-    await api('/rest/v1/supervisores','POST',{nombre:n.toUpperCase(),pin:p,hora_inicio:'08:00',hora_fin:'20:00',dias:'LUNES,MARTES,MIERCOLES,JUEVES,VIERNES,SABADO',activo:true});
-    showToast('✓ Supervisor agregado','ok'); loadHorarios();
-  } catch(e){ showToast('Error','err'); }
-}
-
-// ── PRECIOS ──
-async function loadPrecios() {
-  try {
-    const data = await api('/rest/v1/productos?select=id,nombre,pvp,codigo_barra&activo=eq.true&order=nombre&limit=1000');
-    prodCache = data;
-    document.getElementById('p-count').textContent = data.length;
-    renderPrecios(data);
-  } catch(e){ showToast('Error precios','err'); }
-}
-
-function renderPrecios(lista) {
-  document.getElementById('precios-list').innerHTML = lista.slice(0,100).map(p=>`
-    <div class="precio-row">
-      <div class="precio-nombre">${p.nombre}</div>
-      <input type="number" class="precio-input" value="${(p.pvp||0).toFixed(2)}" step="0.01" inputmode="decimal" id="pvp-${p.id}">
-      <button class="btn-pvp" onclick="savePrecio(${p.id})">✓</button>
-    </div>`).join('');
-}
-
-function filterPrecios(txt) {
-  const f = txt.length<2 ? prodCache : prodCache.filter(p=>p.nombre.toLowerCase().includes(txt.toLowerCase())||(p.codigo_barra||'').includes(txt));
-  document.getElementById('p-count').textContent = f.length;
-  renderPrecios(f);
-}
-
-async function savePrecio(id) {
-  const el = document.getElementById('pvp-'+id);
-  if(!el) return;
-  const pvp = parseFloat(el.value);
-  if(isNaN(pvp)||pvp<0){showToast('Precio inválido','err');return;}
-  try {
-    await api(`/rest/v1/productos?id=eq.${id}`,'PATCH',{pvp});
-    showToast('✓ Precio actualizado','ok');
-    const i = prodCache.findIndex(p=>p.id===id);
-    if(i>=0) prodCache[i].pvp=pvp;
-  } catch(e){ showToast('Error','err'); }
-}
-
-// ── HELPERS ──
-function fmtTime(iso) {
-  if(!iso) return '—';
-  const d=new Date(iso);
-  if(iso.slice(0,10)===hoy()) return d.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
-  return d.toLocaleDateString('es-EC',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
-}
-
-let tTimer;
-function showToast(msg,type=''){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast show '+(type||'');
-  clearTimeout(tTimer); tTimer=setTimeout(()=>t.className='toast',3000);
-}
-
-// INIT
-loadVentas();
-loadBadge();
+// Cargar automáticamente
+cargar();
+setInterval(cargar, 60000);
 </script>
 </body>
 </html>
