@@ -116,6 +116,7 @@ input:checked+.slider::before{background:var(--green);left:21px}
   <div class="nav-tab active" onclick="goTab('ventas')">💰 Ventas</div>
   <div class="nav-tab" onclick="goTab('inventario')">📦 Inventario</div>
   <div class="nav-tab" onclick="goTab('compras')">🧾 Compras</div>
+  <div class="nav-tab" onclick="goTab('ingreso')">📥 Ingreso</div>
   <div class="nav-tab" onclick="goTab('semana')">📊 Semana</div>
   <div class="nav-tab" onclick="goTab('horarios')">🕐 Horarios</div>
   <div class="nav-tab" onclick="goTab('precios')">💲 Precios</div>
@@ -124,8 +125,15 @@ input:checked+.slider::before{background:var(--green);left:21px}
 <!-- VENTAS -->
 <div id="page-ventas" class="page active">
   <div class="section-header">
-    <div class="section-title">Ventas del día</div>
+    <div class="section-title">Ventas</div>
     <button class="btn-refresh" onclick="loadVentas()">↻</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+    <input type="date" id="v-fecha-sel"
+      style="flex:1;min-width:140px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Space Mono',monospace;font-size:14px;outline:none"
+      onchange="loadVentas()">
+    <button onclick="verHoy()"
+      style="background:rgba(88,166,255,.15);border:1px solid var(--blue);color:var(--blue);border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif">Hoy</button>
   </div>
   <div class="stat-grid">
     <div class="stat-box"><div class="stat-label">Total del día</div><div class="stat-value green" id="v-total">—</div><div class="stat-sub" id="v-fecha">—</div></div>
@@ -173,6 +181,59 @@ input:checked+.slider::before{background:var(--green);left:21px}
   <div class="card">
     <div class="card-title">Cuentas por pagar</div>
     <div id="cuentas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+  </div>
+</div>
+
+
+<!-- INGRESO DE MERCADERIA (escanear codigo, sumar stock) -->
+<div id="page-ingreso" class="page">
+  <div class="section-header">
+    <div class="section-title">Ingreso de mercadería</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Escanear producto</div>
+    <div id="scan-zona">
+      <button onclick="iniciarCamara()" id="btn-camara"
+        style="width:100%;background:rgba(63,185,80,.15);border:1px solid var(--green);color:var(--green);border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif">📷 Abrir cámara para escanear</button>
+      <div id="cam-cont" style="display:none;margin-top:12px;position:relative">
+        <video id="cam-video" style="width:100%;border-radius:10px;background:#000" playsinline></video>
+        <button onclick="cerrarCamara()"
+          style="position:absolute;top:8px;right:8px;background:rgba(248,81,73,.85);border:none;color:white;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">✖ Cerrar</button>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">O escribe / pega el código de barras:</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="cod-manual" inputmode="numeric"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Space Mono',monospace;font-size:14px;outline:none"
+          placeholder="Código de barras" onkeydown="if(event.key==='Enter')buscarProducto()">
+        <button onclick="buscarProducto()"
+          style="background:rgba(88,166,255,.15);border:1px solid var(--blue);color:var(--blue);border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif">Buscar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Producto encontrado -->
+  <div class="card" id="prod-encontrado" style="display:none">
+    <div class="card-title">Producto</div>
+    <div id="prod-info"></div>
+    <div style="margin-top:12px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">¿Cuántas unidades entran?</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button onclick="ajustarCant(-1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;width:44px;height:44px;font-size:20px;font-weight:700;cursor:pointer">−</button>
+        <input type="number" id="cant-ingreso" value="1" min="1"
+          style="flex:1;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-family:'Space Mono',monospace;font-size:18px;font-weight:700;outline:none">
+        <button onclick="ajustarCant(1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;width:44px;height:44px;font-size:20px;font-weight:700;cursor:pointer">+</button>
+      </div>
+      <button onclick="confirmarIngreso()" id="btn-ingresar"
+        style="width:100%;margin-top:12px;background:var(--green);border:none;color:#000;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif">✓ Sumar al stock</button>
+    </div>
+  </div>
+
+  <!-- Historial de ingresos de esta sesión -->
+  <div class="card">
+    <div class="card-title">Ingresos de hoy (esta sesión)</div>
+    <div id="ingresos-hist"><div class="empty"><p style="font-size:13px">Aún no has ingresado nada</p></div></div>
   </div>
 </div>
 
@@ -271,10 +332,10 @@ setInterval(() => {
 function goTab(tab) {
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const tabs=['ventas','inventario','compras','semana','horarios','precios'];
+  const tabs=['ventas','inventario','compras','ingreso','semana','horarios','precios'];
   document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)]?.classList.add('active');
   document.getElementById('page-'+tab)?.classList.add('active');
-  ({ventas:loadVentas,inventario:loadPendientes,compras:loadCompras,semana:loadSemana,horarios:loadHorarios,precios:loadPrecios})[tab]?.();
+  ({ventas:loadVentas,inventario:loadPendientes,compras:loadCompras,ingreso:initIngreso,semana:loadSemana,horarios:loadHorarios,precios:loadPrecios})[tab]?.();
 }
 
 function goTabNav(tab, el) {
@@ -284,9 +345,17 @@ function goTabNav(tab, el) {
 }
 
 // ── VENTAS ──
+function verHoy() {
+  const sel = document.getElementById('v-fecha-sel');
+  if (sel) sel.value = '';
+  loadVentas();
+}
+
 async function loadVentas() {
   try {
-    const fecha = hoy();
+    // Usa la fecha del selector, o HOY si está vacío
+    const sel = document.getElementById('v-fecha-sel');
+    const fecha = (sel && sel.value) ? sel.value : hoy();
 
     // 1. Totales del día
     const ventas = await api(`/rest/v1/ventas?fecha=eq.${fecha}&anulada=eq.0&select=id,hora,total,forma_pago,cliente&order=id.desc&limit=500`);
@@ -294,7 +363,10 @@ async function loadVentas() {
     const count = ventas.length;
     document.getElementById('v-total').textContent = '$'+total.toFixed(2);
     document.getElementById('v-count').textContent = count;
-    document.getElementById('v-fecha').textContent = fecha;
+    document.getElementById('v-fecha').textContent = (fecha === hoy() ? 'hoy · ' : '') + fecha;
+    // Actualizar título de la sección
+    const st = document.querySelector('#page-ventas .section-title');
+    if (st) st.textContent = (fecha === hoy() ? 'Ventas del día' : 'Ventas del ' + fecha);
     document.getElementById('v-prom').textContent  = '$'+(count>0?total/count:0).toFixed(2);
     document.getElementById('v-upd').textContent   = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
     if (ventas.length > 0) {
@@ -314,8 +386,14 @@ async function loadVentas() {
     const maxId = Math.max(...ids);
     const idsSet = new Set(ids);
 
-    const detalles = await api(`/rest/v1/venta_detalle?venta_id=gte.${minId}&venta_id=lte.${maxId}&select=venta_id,descripcion,cantidad,subtotal&limit=5000`);
-    const detHoy = detalles.filter(d => idsSet.has(d.venta_id));
+    // Traer detalles SOLO de estas ventas (in.) — funciona para cualquier fecha
+    let detHoy = [];
+    // partir en bloques de 100 ids para no exceder el largo de la URL
+    for (let i = 0; i < ids.length; i += 100) {
+      const bloque = ids.slice(i, i+100);
+      const det = await api(`/rest/v1/venta_detalle?venta_id=in.(${bloque.join(',')})&select=venta_id,descripcion,cantidad,subtotal&limit=5000`);
+      detHoy = detHoy.concat(det);
+    }
 
     // 3. Top productos
     const grupos = {};
@@ -580,6 +658,154 @@ function showToast(msg,type=''){
   t.textContent=msg; t.className='toast show '+(type||'');
   clearTimeout(tTimer); tTimer=setTimeout(()=>t.className='toast',3000);
 }
+
+// ════════════════════════════════════════════════
+//  INGRESO DE MERCADERÍA (escanear, sumar stock)
+// ════════════════════════════════════════════════
+let _prodActual = null;
+let _camStream = null;
+let _camLoop = null;
+let _ingresosHoy = [];
+
+function initIngreso() { renderIngresos(); }
+
+function ajustarCant(d) {
+  const inp = document.getElementById('cant-ingreso');
+  let v = parseInt(inp.value || '1') + d;
+  if (v < 1) v = 1;
+  inp.value = v;
+}
+
+async function buscarProducto(codigo) {
+  const cod = codigo || document.getElementById('cod-manual').value.trim();
+  if (!cod) return;
+  document.getElementById('cod-manual').value = cod;
+  try {
+    let prods = await api(`/rest/v1/productos?or=(codigo_barra.eq.${cod},codigo_caja.eq.${cod})&select=id,nombre,stock,pvp,codigo_barra&limit=1`);
+    if (!prods || prods.length === 0) {
+      prods = await api(`/rest/v1/productos?codigo_interno=eq.${cod}&select=id,nombre,stock,pvp,codigo_barra&limit=1`);
+    }
+    if (!prods || prods.length === 0) {
+      document.getElementById('prod-encontrado').style.display = 'block';
+      document.getElementById('prod-info').innerHTML =
+        `<div style="color:var(--red);font-size:14px">⚠️ No existe un producto con el código <b>${cod}</b>.<br><span style="font-size:12px;color:var(--muted)">Solo se pueden ingresar productos ya registrados.</span></div>`;
+      document.getElementById('btn-ingresar').style.display = 'none';
+      _prodActual = null;
+      return;
+    }
+    _prodActual = prods[0];
+    document.getElementById('prod-encontrado').style.display = 'block';
+    document.getElementById('btn-ingresar').style.display = 'block';
+    document.getElementById('prod-info').innerHTML = `
+      <div style="font-size:16px;font-weight:700">${_prodActual.nombre}</div>
+      <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:4px">
+        Cod: ${_prodActual.codigo_barra||cod} - PVP $${(parseFloat(_prodActual.pvp)||0).toFixed(2)}
+      </div>
+      <div style="margin-top:8px;font-size:14px">Stock actual:
+        <b style="color:var(--blue)">${parseFloat(_prodActual.stock||0).toFixed(0)}</b></div>`;
+    document.getElementById('cant-ingreso').value = 1;
+    document.getElementById('cant-ingreso').focus();
+  } catch(e) {
+    alert('Error buscando producto: ' + e.message);
+  }
+}
+
+async function confirmarIngreso() {
+  if (!_prodActual) return;
+  const cant = parseInt(document.getElementById('cant-ingreso').value || '0');
+  if (cant <= 0) { alert('Pon una cantidad valida'); return; }
+  const stockActual = parseFloat(_prodActual.stock || 0);
+  const stockNuevo = stockActual + cant;
+  if (!confirm(`Sumar ${cant} unidades a "${_prodActual.nombre}"?\n\nStock: ${stockActual.toFixed(0)} -> ${stockNuevo.toFixed(0)}`)) return;
+  try {
+    await api(`/rest/v1/productos?id=eq.${_prodActual.id}`, 'PATCH', {
+      stock: stockNuevo,
+      fecha_modificacion: new Date().toISOString()
+    });
+    try {
+      await api('/rest/v1/inventario_historial', 'POST', {
+        producto_id: _prodActual.id,
+        producto_nombre: _prodActual.nombre,
+        stock_anterior: stockActual,
+        stock_nuevo: stockNuevo,
+        diferencia: cant,
+        usuario: 'pwa-ingreso',
+        observacion: 'Ingreso de mercaderia por PWA'
+      });
+    } catch(e) {}
+    _ingresosHoy.unshift({
+      nombre: _prodActual.nombre, cant: cant,
+      antes: stockActual, ahora: stockNuevo,
+      hora: new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'})
+    });
+    renderIngresos();
+    document.getElementById('prod-encontrado').style.display = 'none';
+    document.getElementById('cod-manual').value = '';
+    _prodActual = null;
+    const aviso = document.createElement('div');
+    aviso.textContent = `+${cant} sumado`;
+    aviso.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:10px 20px;border-radius:20px;font-weight:700;z-index:999;font-size:14px';
+    document.body.appendChild(aviso);
+    setTimeout(()=>aviso.remove(), 1500);
+    document.getElementById('cod-manual').focus();
+  } catch(e) {
+    alert('Error al sumar stock: ' + e.message);
+  }
+}
+
+function renderIngresos() {
+  const cont = document.getElementById('ingresos-hist');
+  if (!cont) return;
+  if (_ingresosHoy.length === 0) {
+    cont.innerHTML = '<div class="empty"><p style="font-size:13px">Aun no has ingresado nada</p></div>';
+    return;
+  }
+  cont.innerHTML = _ingresosHoy.map(i => `
+    <div class="row">
+      <div class="row-info">
+        <div class="row-name">${i.nombre}</div>
+        <div class="row-meta">${i.hora} - ${i.antes.toFixed(0)} -> ${i.ahora.toFixed(0)}</div>
+      </div>
+      <div class="row-amount" style="color:var(--green)">+${i.cant}</div>
+    </div>`).join('');
+}
+
+async function iniciarCamara() {
+  if (!('BarcodeDetector' in window)) {
+    alert('Tu navegador no soporta escaneo con camara.\nUsa Chrome en Android, o escribe el codigo a mano.');
+    return;
+  }
+  try {
+    _camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    const video = document.getElementById('cam-video');
+    video.srcObject = _camStream;
+    await video.play();
+    document.getElementById('cam-cont').style.display = 'block';
+    document.getElementById('btn-camara').style.display = 'none';
+    const detector = new BarcodeDetector({ formats: ['ean_13','ean_8','code_128','upc_a','upc_e','code_39'] });
+    _camLoop = setInterval(async () => {
+      try {
+        const codes = await detector.detect(video);
+        if (codes.length > 0) {
+          const cod = codes[0].rawValue;
+          if (navigator.vibrate) navigator.vibrate(120);
+          cerrarCamara();
+          buscarProducto(cod);
+        }
+      } catch(e) {}
+    }, 500);
+  } catch(e) {
+    alert('No se pudo abrir la camara: ' + e.message);
+  }
+}
+
+function cerrarCamara() {
+  if (_camLoop) { clearInterval(_camLoop); _camLoop = null; }
+  if (_camStream) { _camStream.getTracks().forEach(t => t.stop()); _camStream = null; }
+  document.getElementById('cam-cont').style.display = 'none';
+  document.getElementById('btn-camara').style.display = 'block';
+}
+
 
 // INIT
 loadVentas();
