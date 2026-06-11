@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d1117">
+<title>PLATS Local 2 — Plásticos</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--accent:#bc8cff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#58a6ff;--text:#e6edf3;--muted:#8b949e;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px 10px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.brand{font-size:20px;font-weight:700}.brand span{color:var(--accent)}
+.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;display:inline-block;margin-right:5px}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.header-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
+.page{display:none;padding:16px}.page.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 12px}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.stat-value{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;line-height:1}
+.stat-value.green{color:var(--green)}.stat-value.blue{color:var(--blue)}.stat-value.purple{color:var(--accent)}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
+.row:last-child{border-bottom:none}
+.row-rank{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);min-width:20px;text-align:center}
+.row-info{flex:1;min-width:0}
+.row-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-meta{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
+.row-amount{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--green);text-align:right;white-space:nowrap}
+.loading{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}.empty .icon{font-size:40px;margin-bottom:10px}.empty p{font-size:13px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:100}
+.nav-item{flex:1;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;transition:color .2s}
+.nav-item.active{color:var(--accent)}.nav-item .nav-icon{font-size:20px}
+.filtros{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.finput{flex:1;min-width:100px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Space Mono',monospace;font-size:13px;outline:none}
+.finput:focus{border-color:var(--accent)}
+.finput::placeholder{color:var(--muted)}
+.btn-buscar{background:rgba(188,140,255,.15);border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.btn-refresh{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.venta-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px}
+.vb-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.vb-nf{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--accent)}
+.vb-hora{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
+.vb-total{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--green)}
+.vb-anulada{color:var(--red);text-decoration:line-through}
+.vb-items{margin-top:10px;border-top:1px solid var(--border);padding-top:8px;display:none}
+.vb-items.open{display:block}
+.vb-item{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;color:var(--muted)}
+.vb-item b{color:var(--text);font-weight:500}
+.dia-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.dia-fecha{font-size:14px;font-weight:600}
+.dia-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
+.dia-total{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--green)}
+.tag-anulada{display:inline-block;background:rgba(248,81,73,.15);color:var(--red);font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="brand">PLATS <span>Local 2</span> <span style="font-size:13px;font-weight:400;color:var(--muted)">Plásticos</span></div>
+    <div style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>En vivo</div>
+  </div>
+  <div class="header-sub" id="htime">—</div>
+</div>
+
+<!-- ════════ VENTAS HOY (en vivo) ════════ -->
+<div id="page-hoy" class="page active">
+  <div class="stat-grid">
+    <div class="stat-box"><div class="stat-label">Total del día</div><div class="stat-value green" id="h-total">—</div><div class="stat-sub" id="h-fecha">hoy</div></div>
+    <div class="stat-box"><div class="stat-label">Transacciones</div><div class="stat-value blue" id="h-count">—</div><div class="stat-sub">ventas</div></div>
+    <div class="stat-box"><div class="stat-label">Última venta</div><div class="stat-value purple" id="h-ult">—</div><div class="stat-sub" id="h-ulth">—</div></div>
+    <div class="stat-box"><div class="stat-label">Utilidad día</div><div class="stat-value green" id="h-util">—</div><div class="stat-sub">estimada</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Más vendidos hoy (por producto) <button class="btn-refresh" onclick="loadHoy()">↻</button></div>
+    <div id="top-prod"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ventas de hoy (toca para ver productos)</div>
+    <div id="ventas-hoy"></div>
+  </div>
+</div>
+
+<!-- ════════ BUSCAR / FILTROS ════════ -->
+<div id="page-buscar" class="page">
+  <div class="card">
+    <div class="card-title">Filtrar ventas</div>
+    <div class="filtros">
+      <input class="finput" type="date" id="f-fecha">
+      <input class="finput" type="text" id="f-comprobante" placeholder="N° comprobante" inputmode="numeric">
+    </div>
+    <div class="filtros">
+      <input class="finput" type="time" id="f-desde" title="Hora desde">
+      <input class="finput" type="time" id="f-hasta" title="Hora hasta">
+      <button class="btn-buscar" onclick="buscarVentas()">Buscar</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" id="bus-titulo">Resultados</div>
+    <div id="bus-result"><div class="empty"><div class="icon">🔎</div><p>Usa los filtros de arriba</p></div></div>
+  </div>
+</div>
+
+<!-- ════════ HISTORIAL POR DÍA ════════ -->
+<div id="page-historial" class="page">
+  <div class="card">
+    <div class="card-title">Total por día (últimos 30 días) <button class="btn-refresh" onclick="loadHistorial()">↻</button></div>
+    <div id="hist-dias"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="goTab('hoy',this)"><div class="nav-icon">💰</div>Hoy</div>
+  <div class="nav-item" onclick="goTab('buscar',this)"><div class="nav-icon">🔎</div>Buscar</div>
+  <div class="nav-item" onclick="goTab('historial',this)"><div class="nav-icon">📅</div>Por día</div>
+</div>
+
+<script>
+const URL_S = "https://ngobtpdhlqxvocesufbw.supabase.co";
+const KEY_S = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nb2J0cGRobHF4dm9jZXN1ZmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTQ1MjEsImV4cCI6MjA5NjE5MDUyMX0.EciHeMh0tMKwbznfLq7PbAaS-CHmS6wdPlAX_OE9WG4";
+
+async function api(path){
+  const r = await fetch(URL_S + path, {headers:{apikey:KEY_S, Authorization:"Bearer "+KEY_S}});
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+const $ = id => document.getElementById(id);
+const fmt$ = n => '$' + (parseFloat(n)||0).toFixed(2);
+function hoyStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// ── Reloj header ──
+setInterval(()=>{ $('htime').textContent = new Date().toLocaleString('es-EC'); }, 1000);
+
+// ── Tabs ──
+function goTab(tab, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  $('page-'+tab).classList.add('active');
+  el.classList.add('active');
+  ({hoy:loadHoy, historial:loadHistorial})[tab]?.();
+}
+
+// ── Render de una venta con sus productos (expandible) ──
+function ventaHTML(v, detallesPorVenta){
+  const items = detallesPorVenta[v.id] || [];
+  const anulada = v.anulada == 1;
+  return `<div class="venta-box">
+    <div class="vb-head" onclick="this.parentElement.querySelector('.vb-items').classList.toggle('open')">
+      <div>
+        <div class="vb-nf">#${v.numero_factura||v.id}${anulada?'<span class="tag-anulada">Anulada</span>':''}</div>
+        <div class="vb-hora">${v.fecha||''} ${(v.hora||'').substring(0,8)} · ${v.forma_pago||''}</div>
+      </div>
+      <div class="vb-total ${anulada?'vb-anulada':''}">${fmt$(v.total)}</div>
+    </div>
+    <div class="vb-items">
+      ${items.length ? items.map(d =>
+        `<div class="vb-item"><span><b>${d.cantidad}×</b> ${d.descripcion||'—'}</span><span>${fmt$(d.subtotal)}</span></div>`
+      ).join('') : '<div class="vb-item">Sin detalle</div>'}
+    </div>
+  </div>`;
+}
+
+async function detallesDe(ids){
+  if(!ids.length) return {};
+  const det = await api(`/rest/v1/l2_venta_detalle?venta_id=in.(${ids.join(',')})&select=venta_id,descripcion,cantidad,subtotal&order=id`);
+  const map = {};
+  det.forEach(d=>{ (map[d.venta_id] = map[d.venta_id]||[]).push(d); });
+  return map;
+}
+
+// ════════ HOY (en vivo) ════════
+async function loadHoy(){
+  try{
+    const fecha = hoyStr();
+    $('h-fecha').textContent = fecha;
+    const ventas = await api(`/rest/v1/l2_ventas?fecha=eq.${fecha}&select=*&order=id.desc&limit=300`);
+    const activas = ventas.filter(v=>v.anulada!=1);
+    const total = activas.reduce((s,v)=>s+(parseFloat(v.total)||0),0);
+    const util  = activas.reduce((s,v)=>s+(parseFloat(v.utilidad_total)||0),0);
+
+    $('h-total').textContent = fmt$(total);
+    $('h-count').textContent = activas.length;
+    $('h-util').textContent  = fmt$(util);
+    if(ventas.length){
+      $('h-ult').textContent  = fmt$(ventas[0].total);
+      $('h-ulth').textContent = (ventas[0].hora||'').substring(0,5);
+    }
+
+    const ids = ventas.map(v=>v.id);
+    const map = await detallesDe(ids);
+
+    // Más vendidos por producto
+    const porProd = {};
+    Object.entries(map).forEach(([vid, items])=>{
+      const v = ventas.find(x=>x.id==vid);
+      if(v && v.anulada==1) return;
+      items.forEach(d=>{
+        const k = d.descripcion||'—';
+        porProd[k] = porProd[k]||{cant:0, monto:0};
+        porProd[k].cant  += parseFloat(d.cantidad)||0;
+        porProd[k].monto += parseFloat(d.subtotal)||0;
+      });
+    });
+    const top = Object.entries(porProd).sort((a,b)=>b[1].monto-a[1].monto).slice(0,15);
+    $('top-prod').innerHTML = top.length ? top.map(([n,s],i)=>
+      `<div class="row"><div class="row-rank">${i+1}</div>
+       <div class="row-info"><div class="row-name">${n}</div><div class="row-meta">${s.cant} unid</div></div>
+       <div class="row-amount">${fmt$(s.monto)}</div></div>`
+    ).join('') : '<div class="empty"><div class="icon">🛒</div><p>Sin ventas hoy</p></div>';
+
+    $('ventas-hoy').innerHTML = ventas.slice(0,50).map(v=>ventaHTML(v, map)).join('') ||
+      '<div class="empty"><p>Sin ventas hoy</p></div>';
+  }catch(e){
+    $('top-prod').innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>Error: ${e.message}<br>¿Ya corriste el SQL de las tablas l2_?</p></div>`;
+  }
+}
+
+// ════════ BUSCAR con filtros ════════
+async function buscarVentas(){
+  const fecha = $('f-fecha').value;
+  const nf    = $('f-comprobante').value.trim();
+  const hd    = $('f-desde').value;
+  const hh    = $('f-hasta').value;
+
+  let q = '/rest/v1/l2_ventas?select=*&order=id.desc&limit=200';
+  if(nf)    q += `&numero_factura=ilike.*${nf}*`;
+  if(fecha) q += `&fecha=eq.${fecha}`;
+  if(hd)    q += `&hora=gte.${hd}:00`;
+  if(hh)    q += `&hora=lte.${hh}:59`;
+
+  $('bus-result').innerHTML = '<div class="loading"><div class="spinner"></div>Buscando...</div>';
+  try{
+    const ventas = await api(q);
+    const total = ventas.filter(v=>v.anulada!=1).reduce((s,v)=>s+(parseFloat(v.total)||0),0);
+    $('bus-titulo').textContent = `${ventas.length} ventas — Total ${fmt$(total)}`;
+    const map = await detallesDe(ventas.map(v=>v.id).slice(0,100));
+    $('bus-result').innerHTML = ventas.length
+      ? ventas.map(v=>ventaHTML(v, map)).join('')
+      : '<div class="empty"><div class="icon">🔎</div><p>Sin resultados con esos filtros</p></div>';
+  }catch(e){
+    $('bus-result').innerHTML = `<div class="empty"><p>Error: ${e.message}</p></div>`;
+  }
+}
+
+// ════════ HISTORIAL POR DÍA ════════
+async function loadHistorial(){
+  try{
+    const d = new Date(); d.setDate(d.getDate()-30);
+    const desde = d.toISOString().substring(0,10);
+    const ventas = await api(`/rest/v1/l2_ventas?fecha=gte.${desde}&anulada=eq.0&select=fecha,total,id&order=fecha.desc&limit=3000`);
+    const dias = {};
+    ventas.forEach(v=>{
+      const f = v.fecha||'—';
+      dias[f] = dias[f]||{total:0,count:0};
+      dias[f].total += parseFloat(v.total)||0;
+      dias[f].count++;
+    });
+    const lista = Object.entries(dias).sort((a,b)=>b[0].localeCompare(a[0]));
+    $('hist-dias').innerHTML = lista.length ? lista.map(([f,s])=>
+      `<div class="dia-box">
+        <div><div class="dia-fecha">${f}</div><div class="dia-sub">${s.count} ventas · prom ${fmt$(s.total/s.count)}</div></div>
+        <div class="dia-total">${fmt$(s.total)}</div>
+      </div>`
+    ).join('') : '<div class="empty"><p>Sin ventas registradas</p></div>';
+  }catch(e){
+    $('hist-dias').innerHTML = `<div class="empty"><p>Error: ${e.message}</p></div>`;
+  }
+}
+
+// ── Auto-refresh de "Hoy" cada 60s si la pestaña está visible ──
+setInterval(()=>{
+  if($('page-hoy').classList.contains('active') && !document.hidden) loadHoy();
+}, 60000);
+
+loadHoy();
+</script>
+</body>
+</html>
