@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -102,6 +102,16 @@ select.finput{font-family:'Space Grotesk',sans-serif}
 .scan-bar{padding:14px;display:flex;justify-content:space-between;align-items:center;background:var(--surface)}
 .scan-close{background:rgba(248,81,73,.15);border:1px solid var(--red);color:var(--red);border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
 .mini-form{background:var(--surface2);border:1px dashed var(--border);border-radius:10px;padding:12px;margin-top:10px}
+.lock{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px}
+.lock-brand{font-size:26px;font-weight:700}.lock-brand span{color:var(--accent)}
+.lock-sub{font-size:12px;color:var(--muted)}
+.lock-inp{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;color:var(--text);font-family:'Space Mono',monospace;font-size:26px;letter-spacing:12px;text-align:center;width:220px;outline:none}
+.lock-inp:focus{border-color:var(--accent)}
+.lock-inp.mal{border-color:var(--red);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.lock-btn{background:rgba(188,140,255,.15);border:1px solid var(--accent);color:var(--accent);border-radius:12px;padding:13px 40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.lock-err{font-size:12px;color:var(--red);min-height:16px}
+.btn-lock{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:100px;background:var(--surface2);border:1px solid var(--green);color:var(--green);padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:400;display:none;max-width:90%}
 .toast.err{border-color:var(--red);color:var(--red)}
 </style>
@@ -111,7 +121,7 @@ select.finput{font-family:'Space Grotesk',sans-serif}
 <div class="header">
   <div class="header-top">
     <div class="brand">PLATS <span>Local 2</span> <span style="font-size:13px;font-weight:400;color:var(--muted)">Plásticos</span></div>
-    <div style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>En vivo</div>
+    <div style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>En vivo <button class="btn-lock" onclick="bloquear()" title="Bloquear">🔒</button></div>
   </div>
   <div class="header-sub" id="htime">—</div>
 </div>
@@ -218,6 +228,16 @@ select.finput{font-family:'Space Grotesk',sans-serif}
 
 <div class="toast" id="toast"></div>
 
+<!-- Pantalla de bloqueo -->
+<div class="lock" id="lock" style="display:none">
+  <div class="lock-brand">PLATS <span>Local 2</span></div>
+  <div class="lock-sub">Ingresa el PIN para continuar</div>
+  <input class="lock-inp" id="lock-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off"
+         onkeydown="if(event.key==='Enter')verificarPin()">
+  <div class="lock-err" id="lock-err"></div>
+  <button class="lock-btn" onclick="verificarPin()">Entrar</button>
+</div>
+
 <div class="bottom-nav">
   <div class="nav-item active" onclick="goTab('hoy',this)"><div class="nav-icon">💰</div>Hoy</div>
   <div class="nav-item" onclick="goTab('buscar',this)"><div class="nav-icon">🔎</div>Buscar</div>
@@ -226,6 +246,39 @@ select.finput{font-family:'Space Grotesk',sans-serif}
 </div>
 
 <script>
+// ════════ PIN DE ACCESO ════════
+// PIN por defecto: 2026 — para cambiarlo: abre la consola del navegador (F12),
+// escribe  hashPin('TU_NUEVO_PIN')  , copia el resultado y pégalo aquí abajo.
+const PIN_HASH = "158a323a7ba44870f23d96f1516dd70aa48e9a72db4ebb026b0a89e212a208ab";
+
+async function hashPin(pin){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(pin)));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+window.hashPin = hashPin;
+
+let appIniciada = false;
+function iniciarApp(){ if(!appIniciada){ appIniciada = true; loadHoy(); } }
+
+async function verificarPin(){
+  const inp = document.getElementById('lock-pin');
+  const h = await hashPin(inp.value.trim());
+  if(h === PIN_HASH){
+    localStorage.setItem('plats2_pin', h);
+    document.getElementById('lock').style.display = 'none';
+    iniciarApp();
+  }else{
+    inp.value = ''; inp.classList.remove('mal'); void inp.offsetWidth; inp.classList.add('mal');
+    document.getElementById('lock-err').textContent = 'PIN incorrecto';
+    setTimeout(()=>document.getElementById('lock-err').textContent='', 2500);
+  }
+}
+function bloquear(){
+  localStorage.removeItem('plats2_pin');
+  document.getElementById('lock').style.display = 'flex';
+  setTimeout(()=>document.getElementById('lock-pin').focus(), 100);
+}
+
 const URL_S = "https://ngobtpdhlqxvocesufbw.supabase.co";
 const KEY_S = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nb2J0cGRobHF4dm9jZXN1ZmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTQ1MjEsImV4cCI6MjA5NjE5MDUyMX0.EciHeMh0tMKwbznfLq7PbAaS-CHmS6wdPlAX_OE9WG4";
 
@@ -278,9 +331,13 @@ let prodsCargados = false;
 async function loadProductos(force){
   if(prodsCargados && !force) return true;
   try{
-    PRODS = await api('/rest/v1/l2_productos?select=id,codigo_barra,codigo_interno,descripcion,nombre,costo,precio1,stock,activo&limit=5000');
+    PRODS = await api('/rest/v1/l2_productos?select=id,codigo_barra,codigo_interno,descripcion,nombre,costo,costo_actual,precio1,precio_1,stock,stock_actual,activo&limit=5000');
     prodById = {}; prodByDesc = {};
     PRODS.forEach(p=>{
+      // tu sync local llena costo_actual/precio_1/stock_actual; el dashboard usa costo/precio1
+      p.costoEf  = num(p.costo_actual) ?? num(p.costo) ?? 0;
+      p.precioEf = num(p.precio_1)     ?? num(p.precio1) ?? 0;
+      p.stockEf  = num(p.stock_actual) ?? num(p.stock) ?? 0;
       prodById[p.id] = p;
       const k = (p.descripcion||p.nombre||'').trim().toUpperCase();
       if(k) prodByDesc[k] = p;
@@ -305,7 +362,7 @@ function utilItem(d){
   if(costo === null){
     if(num(d.utilidad) !== null) return {util: parseFloat(d.utilidad), costo:null, fuente:'venta'};
     const p = prodById[d.producto_id] || prodByDesc[(d.descripcion||'').trim().toUpperCase()];
-    if(p){ costo = parseFloat(p.costo)||0; fuente = 'catálogo'; }
+    if(p){ costo = p.costoEf||0; fuente = 'catálogo'; }
   }
   if(costo === null) return {util:null, costo:null, fuente:null};
   return {util: sub - costo*cant, costo, fuente};
@@ -568,9 +625,9 @@ function renderResultados(res, q){
     <div class="prod-result" onclick="agregarAlCarrito(${p.id})">
       <div class="pr-info">
         <div class="pr-name">${p.descripcion||p.nombre||'—'}</div>
-        <div class="pr-meta">${p.codigo_barra||p.codigo_interno||'sin código'} · PVP ${fmt$(p.precio1)}</div>
+        <div class="pr-meta">${p.codigo_barra||p.codigo_interno||'sin código'} · PVP ${fmt$(p.precioEf)}</div>
       </div>
-      <div class="pr-costo">costo ${fmt$(p.costo)}</div>
+      <div class="pr-costo">últ. costo ${fmt$(p.costoEf)}</div>
       <button class="pr-edit" onclick="event.stopPropagation();editarCosto(${p.id})">✎</button>
     </div>`).join('');
 }
@@ -578,13 +635,13 @@ function renderResultados(res, q){
 // ── Editar costo directo (sin compra) ──
 async function editarCosto(pid){
   const p = prodById[pid]; if(!p) return;
-  const nuevo = prompt(`Nuevo costo para:\n${p.descripcion||p.nombre}\n(costo actual ${fmt$(p.costo)})`, p.costo);
+  const nuevo = prompt(`Nuevo costo para:\n${p.descripcion||p.nombre}\n(costo actual ${fmt$(p.costoEf)})`, p.costoEf);
   if(nuevo === null) return;
   const c = parseFloat(String(nuevo).replace(',','.'));
   if(isNaN(c) || c < 0){ toast('Costo inválido', true); return; }
   try{
-    await apiW(`/rest/v1/l2_productos?id=eq.${pid}`, 'PATCH', {costo:c, actualizado:new Date().toISOString()});
-    p.costo = c;
+    await apiW(`/rest/v1/l2_productos?id=eq.${pid}`, 'PATCH', {costo:c, costo_actual:c});
+    p.costoEf = c;
     toast(`Costo actualizado a ${fmt$(c)}`);
     buscarProductoVivo();
   }catch(e){ toast('Error: '+e.message, true); }
@@ -614,16 +671,19 @@ function formNuevoProducto(){
 async function crearProducto(){
   const desc = $('np-desc').value.trim().toUpperCase();
   if(!desc){ toast('Pon la descripción', true); return; }
+  const c = parseFloat($('np-costo').value.replace(',','.'))||0;
+  const pv = parseFloat($('np-precio').value.replace(',','.'))||0;
   const nuevo = {
     id: Date.now(),
     codigo_barra: $('np-codigo').value.trim() || null,
     descripcion: desc, nombre: desc,
-    costo: parseFloat($('np-costo').value.replace(',','.'))||0,
-    precio1: parseFloat($('np-precio').value.replace(',','.'))||0,
-    stock: 0, activo: 1
+    costo: c, costo_actual: c,
+    precio1: pv, precio_1: pv,
+    stock: 0, stock_actual: 0, activo: 1
   };
   try{
     await apiW('/rest/v1/l2_productos', 'POST', [nuevo]);
+    nuevo.costoEf=c; nuevo.precioEf=pv; nuevo.stockEf=0;
     PRODS.push(nuevo); prodById[nuevo.id]=nuevo; prodByDesc[desc]=nuevo;
     toast('Producto creado');
     $('prod-nuevo').innerHTML=''; $('prod-resultados').innerHTML='';
@@ -640,8 +700,8 @@ function agregarAlCarrito(pid){
     producto_id: p.id,
     descripcion: p.descripcion||p.nombre||'—',
     cantidad: 1,
-    costo: parseFloat(p.costo)||0,
-    costoAnterior: parseFloat(p.costo)||0
+    costo: p.costoEf||0,
+    costoAnterior: p.costoEf||0
   });
   renderCarrito();
   if(navigator.vibrate) navigator.vibrate(40);
@@ -722,8 +782,8 @@ async function guardarCompra(){
       for(const c of carrito){
         if(Math.abs(c.costo - c.costoAnterior) > 0.0001){
           await apiW(`/rest/v1/l2_productos?id=eq.${c.producto_id}`, 'PATCH',
-            {costo:c.costo, actualizado:new Date().toISOString()});
-          const p = prodById[c.producto_id]; if(p) p.costo = c.costo;
+            {costo:c.costo, costo_actual:c.costo});
+          const p = prodById[c.producto_id]; if(p) p.costoEf = c.costo;
         }
       }
     }
@@ -816,10 +876,16 @@ function cerrarScanner(){
 
 // ── Auto-refresh de "Hoy" cada 60s si la pestaña está visible ──
 setInterval(()=>{
-  if($('page-hoy').classList.contains('active') && !document.hidden) loadHoy();
+  if(appIniciada && $('page-hoy').classList.contains('active') && !document.hidden) loadHoy();
 }, 60000);
 
-loadHoy();
+// ── Arranque: pedir PIN salvo sesión válida guardada ──
+if(localStorage.getItem('plats2_pin') === PIN_HASH){
+  iniciarApp();
+}else{
+  document.getElementById('lock').style.display = 'flex';
+  setTimeout(()=>document.getElementById('lock-pin').focus(), 100);
+}
 </script>
 </body>
 </html>
