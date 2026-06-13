@@ -669,9 +669,10 @@ async function editarCosto(pid){
   const c = parseFloat(String(nuevo).replace(',','.'));
   if(isNaN(c) || c < 0){ toast('Costo inválido', true); return; }
   try{
-    await apiW(`/rest/v1/l2_productos?id=eq.${pid}`, 'PATCH', {costo:c, costo_actual:c});
+    await apiW(`/rest/v1/l2_productos?id=eq.${pid}`, 'PATCH',
+               {costo:c, costo_actual:c, pendiente_pos:1, pwa_edit_at:new Date().toISOString()});
     p.costoEf = c;
-    toast(`Costo actualizado a ${fmt$(c)}`);
+    toast(`Costo actualizado a ${fmt$(c)} (baja a la caja en minutos)`);
     buscarProductoVivo();
   }catch(e){ toast('Error: '+e.message, true); }
 }
